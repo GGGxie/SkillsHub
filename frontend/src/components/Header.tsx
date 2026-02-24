@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Globe, Menu, X } from 'lucide-react'
 import { useState } from 'react'
-import { GoogleLogin, CredentialResponse, useGoogleOneTapLogin } from '@react-oauth/google'
+import { GoogleLogin, CredentialResponse } from '@react-oauth/google'
 import { useAuth } from '../hooks/useAuth'
 import { api } from '../api'
 
@@ -26,13 +26,9 @@ export default function Header() {
     }
   }
 
-  // 顶层注册 One Tap：等 isLoading 结束再启用，避免已登录用户看到弹窗
-  useGoogleOneTapLogin({
-    onSuccess: handleGoogleSuccess,
-    onError: () => setLoginError(t('auth.googleError')),
-    disabled: isLoading || !!user,
-    cancel_on_tap_outside: false,  // 防止误点空白区域触发冷却退避
-  })
+  // One Tap 已禁用：FedCM 在部分环境（如 Cloudflare Tunnel + 第三方 Cookie 限制）下会报
+  // "Error retrieving a token"，暂用按钮登录替代。若需恢复，取消注释 useGoogleOneTapLogin 即可。
+  // useGoogleOneTapLogin({ onSuccess: handleGoogleSuccess, onError: () => setLoginError(t('auth.googleError')), disabled: isLoading || !!user })
 
   const toggleLang = () => {
     const next = i18n.language === 'en' ? 'zh' : 'en'
@@ -117,10 +113,11 @@ export default function Header() {
                   key={googleLocale}
                   onSuccess={handleGoogleSuccess}
                   onError={() => setLoginError(t('auth.googleError'))}
+                  useOneTap={false}
                   locale={googleLocale}
                   theme="outline"
                   shape="rectangular"
-                  size="medium"
+                  size="large"
                   text="signin_with"
                 />
                 {loginError && <p className="text-xs text-red-500">{loginError}</p>}
@@ -183,10 +180,11 @@ export default function Header() {
                     key={googleLocale}
                     onSuccess={handleGoogleSuccess}
                     onError={() => setLoginError(t('auth.googleError'))}
+                    useOneTap={false}
                     locale={googleLocale}
                     theme="outline"
                     shape="rectangular"
-                    size="medium"
+                    size="large"
                     text="signin_with"
                     width="280"
                   />

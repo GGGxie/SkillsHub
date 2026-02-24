@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { BookOpen, Eye } from 'lucide-react'
 import { api, Article } from '../api'
 
 export default function LearnPage() {
+  const navigate = useNavigate()
   const { t, i18n } = useTranslation()
   const isZH = i18n.language === 'zh'
   const [articles, setArticles] = useState<Article[]>([])
@@ -48,7 +50,8 @@ export default function LearnPage() {
             return (
               <article
                 key={article.id}
-                className="group bg-white rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300 p-6"
+                onClick={() => navigate(`/learn/${article.id}`)}
+                className="group bg-white rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300 p-6 cursor-pointer"
               >
                 <div className="flex items-center gap-2 mb-3">
                   <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${colorClass}`}>

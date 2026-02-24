@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Search, ChevronLeft, ChevronRight, LayoutGrid, AlignLeft } from 'lucide-react'
 import { api, Skill, PaginatedResponse } from '../api'
@@ -10,10 +10,13 @@ export default function HomePage() {
   const [skills, setSkills] = useState<PaginatedResponse<Skill>>({ data: [], total: 0, page: 1, page_size: 12, total_pages: 0 })
   const [sort, setSort] = useState<'hottest' | 'latest'>('hottest')
   const [search, setSearch] = useState('')
+  const [inputValue, setInputValue] = useState('')
   const [page, setPage] = useState(1)
   const [compact, setCompact] = useState(false)
   const [featuredIdx, setFeaturedIdx] = useState(0)
   const [loading, setLoading] = useState(true)
+  const composingRef = useRef(false)
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>()
 
   useEffect(() => {
     api.skills.featured().then(setFeatured).catch(() => {})
@@ -27,6 +30,33 @@ export default function HomePage() {
       .finally(() => setLoading(false))
   }, [page, sort, search])
 
+  const triggerSearch = useCallback((value: string) => {
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => {
+      setSearch(value)
+      setPage(1)
+    }, 300)
+  }, [])
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setInputValue(value)
+    if (!composingRef.current) {
+      triggerSearch(value)
+    }
+  }
+
+  const handleCompositionEnd = (e: React.CompositionEvent<HTMLInputElement>) => {
+    composingRef.current = false
+    triggerSearch((e.target as HTMLInputElement).value)
+  }
+
+  const handleSearchSubmit = () => {
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    setSearch(inputValue)
+    setPage(1)
+  }
+
   const featuredVisible = featured.slice(featuredIdx, featuredIdx + 3)
 
   return (
@@ -39,12 +69,21 @@ export default function HomePage() {
           </h1>
           <p className="text-lg text-gray-500 mb-8">{t('hero.subtitle')}</p>
           <div className="relative max-w-xl mx-auto">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <button
+              onClick={handleSearchSubmit}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="Search"
+            >
+              <Search className="w-5 h-5" />
+            </button>
             <input
               type="text"
               placeholder={t('home.search')}
-              value={search}
-              onChange={(e) => { setSearch(e.target.value); setPage(1) }}
+              value={inputValue}
+              onChange={handleInputChange}
+              onCompositionStart={() => { composingRef.current = true }}
+              onCompositionEnd={handleCompositionEnd}
+              onKeyDown={(e) => { if (e.key === 'Enter') handleSearchSubmit() }}
               className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent shadow-sm"
             />
           </div>
@@ -52,8 +91,8 @@ export default function HomePage() {
       </section>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Featured carousel */}
-        {featured.length > 0 && (
+        {/* Featured carousel - hidden during search */}
+        {featured.length > 0 && !search && (
           <section className="mb-12">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-gray-900">{t('home.featured')}</h2>

@@ -32,8 +32,8 @@ export default function Footer() {
           <div>
             <h3 className="text-sm font-semibold text-gray-900 mb-4">{t('footer.legal')}</h3>
             <ul className="space-y-3">
-              <li><Link to="/terms" className="text-sm text-gray-500 hover:text-gray-700">{t('footer.terms')}</Link></li>
-              <li><Link to="/privacy" className="text-sm text-gray-500 hover:text-gray-700">{t('footer.privacy')}</Link></li>
+              <li><span className="text-sm text-gray-400 cursor-default">{t('footer.terms')}</span></li>
+              <li><span className="text-sm text-gray-400 cursor-default">{t('footer.privacy')}</span></li>
             </ul>
           </div>
 
@@ -64,8 +64,7 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} Skills Hub. {t('footer.rights')}
           </p>
           <div className="flex items-center gap-4 text-sm text-gray-400">
-            <span>Status</span>
-            <span>Feedback</span>
+            <a href="mailto:contact@skillshub.cc" className="hover:text-gray-600 transition-colors">Feedback</a>
           </div>
         </div>
       </div>

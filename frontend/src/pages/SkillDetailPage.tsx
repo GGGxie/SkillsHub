@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import ReactMarkdown from 'react-markdown'
-import { ArrowLeft, ThumbsUp, Share2, Download, Calendar, Tag, User, Eye } from 'lucide-react'
+import remarkGfm from 'remark-gfm'
+import { ArrowLeft, ThumbsUp, Share2, Download, Calendar, Tag, User, Eye, Check } from 'lucide-react'
 import { api, Skill, Comment } from '../api'
 import { useAuth } from '../hooks/useAuth'
 
@@ -18,6 +19,7 @@ export default function SkillDetailPage() {
   const [newComment, setNewComment] = useState('')
   const [liked, setLiked] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [shared, setShared] = useState(false)
 
   useEffect(() => {
     if (!id) return
@@ -45,6 +47,38 @@ export default function SkillDetailPage() {
     setNewComment('')
     const updated = await api.skills.comments(id)
     setComments(updated)
+  }
+
+  const handleDownload = () => {
+    if (!skill) return
+    const skillName = skill.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+    const description = isZH && skill.desc_zh ? skill.desc_zh : skill.description
+    const body = isZH && skill.content_zh ? skill.content_zh : skill.content
+
+    const skillMd = `---\nname: ${skillName}\ndescription: >-\n  ${description}\n---\n\n${body}`
+
+    const blob = new Blob([skillMd], { type: 'text/markdown;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'SKILL.md'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
+
+  const handleShare = async () => {
+    const url = window.location.href
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: skill?.title, url })
+      } catch { /* user cancelled */ }
+    } else {
+      await navigator.clipboard.writeText(url)
+      setShared(true)
+      setTimeout(() => setShared(false), 2000)
+    }
   }
 
   if (loading) {
@@ -102,14 +136,23 @@ export default function SkillDetailPage() {
             >
               <ThumbsUp className="w-4 h-4" /> {skill.likes}
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50">
-              <Share2 className="w-4 h-4" /> {t('skill.share')}
+            <button
+              onClick={handleShare}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                shared
+                  ? 'border-green-200 bg-green-50 text-green-600'
+                  : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              {shared ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
+              {shared ? (isZH ? '已复制链接' : 'Link Copied!') : t('skill.share')}
             </button>
           </div>
 
           {content && (
             <div className="prose prose-gray max-w-none mb-12">
               <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
                 components={{
                   code: ({ children, className, ...props }) => {
                     const isBlock = className?.includes('language-')
@@ -120,7 +163,15 @@ export default function SkillDetailPage() {
                     ) : (
                       <code className="bg-gray-100 text-gray-800 px-1.5 py-0.5 rounded text-sm" {...props}>{children}</code>
                     )
-                  }
+                  },
+                  table: ({ children }) => (
+                    <div className="overflow-x-auto my-4">
+                      <table className="min-w-full border border-gray-200 rounded-lg text-sm">{children}</table>
+                    </div>
+                  ),
+                  thead: ({ children }) => <thead className="bg-gray-50">{children}</thead>,
+                  th: ({ children }) => <th className="px-4 py-2 text-left font-semibold text-gray-700 border-b border-gray-200">{children}</th>,
+                  td: ({ children }) => <td className="px-4 py-2 text-gray-600 border-b border-gray-100">{children}</td>,
                 }}
               >
                 {content}
@@ -231,7 +282,10 @@ export default function SkillDetailPage() {
               )}
             </div>
 
-            <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-colors">
+            <button
+              onClick={handleDownload}
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-colors"
+            >
               <Download className="w-4 h-4" /> {t('skill.download')}
             </button>
           </div>

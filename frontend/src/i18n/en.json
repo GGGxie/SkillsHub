@@ -52,7 +52,8 @@
     "signIn": "Sign In",
     "signUp": "Sign Up",
     "emailPlaceholder": "your@email.com",
-    "passwordPlaceholder": "Enter your password"
+    "passwordPlaceholder": "Enter your password",
+    "googleError": "Google sign-in failed, please try again"
   },
   "learn": {
     "title": "Learn About Skills",

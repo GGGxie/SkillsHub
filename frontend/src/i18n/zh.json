@@ -52,7 +52,8 @@
     "signIn": "登录",
     "signUp": "注册",
     "emailPlaceholder": "your@email.com",
-    "passwordPlaceholder": "输入密码"
+    "passwordPlaceholder": "输入密码",
+    "googleError": "Google 登录失败，请重试"
   },
   "learn": {
     "title": "学习技能",

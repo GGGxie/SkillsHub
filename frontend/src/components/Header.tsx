@@ -13,6 +13,8 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [loginError, setLoginError] = useState('')
 
+  const googleLocale = i18n.language === 'zh' ? 'zh_CN' : 'en'
+
   const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
     if (!credentialResponse.credential) return
     try {
@@ -27,7 +29,7 @@ export default function Header() {
       login(token, u)
       setLoginError('')
     } catch {
-      setLoginError('登录失败，请重试')
+      setLoginError(t('auth.googleError'))
     }
   }
 
@@ -111,9 +113,11 @@ export default function Header() {
             ) : (
               <div className="flex flex-col items-end gap-1">
                 <GoogleLogin
+                  key={googleLocale}
                   onSuccess={handleGoogleSuccess}
-                  onError={() => setLoginError('登录失败，请重试')}
+                  onError={() => setLoginError(t('auth.googleError'))}
                   useOneTap
+                  locale={googleLocale}
                   theme="outline"
                   shape="rectangular"
                   size="medium"
@@ -176,8 +180,10 @@ export default function Header() {
               ) : (
                 <div className="px-3 py-2">
                   <GoogleLogin
+                    key={googleLocale}
                     onSuccess={handleGoogleSuccess}
-                    onError={() => setLoginError('登录失败，请重试')}
+                    onError={() => setLoginError(t('auth.googleError'))}
+                    locale={googleLocale}
                     theme="outline"
                     shape="rectangular"
                     size="medium"

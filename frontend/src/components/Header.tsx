@@ -8,7 +8,7 @@ import { api } from '../api'
 
 export default function Header() {
   const { t, i18n } = useTranslation()
-  const { user, login, logout } = useAuth()
+  const { user, login, logout, isLoading } = useAuth()
   const location = useLocation()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [loginError, setLoginError] = useState('')
@@ -26,11 +26,12 @@ export default function Header() {
     }
   }
 
-  // 顶层注册 One Tap，不受条件渲染影响，未登录时自动弹出账号识别框
+  // 顶层注册 One Tap：等 isLoading 结束再启用，避免已登录用户看到弹窗
   useGoogleOneTapLogin({
     onSuccess: handleGoogleSuccess,
     onError: () => setLoginError(t('auth.googleError')),
-    disabled: !!user,
+    disabled: isLoading || !!user,
+    cancel_on_tap_outside: false,  // 防止误点空白区域触发冷却退避
   })
 
   const toggleLang = () => {

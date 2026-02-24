@@ -10,8 +10,11 @@ import './index.css'
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || ''
 
 function GoogleWrapper({ children }: { children: ReactNode }) {
-  if (!GOOGLE_CLIENT_ID) return <>{children}</>
-  return <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>{children}</GoogleOAuthProvider>
+  return (
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      {children}
+    </GoogleOAuthProvider>
+  )
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

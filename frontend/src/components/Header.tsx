@@ -18,14 +18,7 @@ export default function Header() {
   const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
     if (!credentialResponse.credential) return
     try {
-      const payload = JSON.parse(atob(credentialResponse.credential.split('.')[1]))
-      const { token, user: u } = await api.auth.googleToken({
-        credential: credentialResponse.credential,
-        name: payload.name,
-        email: payload.email,
-        picture: payload.picture,
-        google_id: payload.sub,
-      })
+      const { token, user: u } = await api.auth.googleToken(credentialResponse.credential)
       login(token, u)
       setLoginError('')
     } catch {

@@ -14,6 +14,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
+	"google.golang.org/api/idtoken"
 )
 
 type AuthHandler struct {
@@ -87,13 +88,11 @@ func (h *AuthHandler) GoogleCallback(c *gin.Context) {
 }
 
 // GoogleTokenLogin handles frontend Google Sign-In with ID token
+// 按照官方文档要求，后端必须验证 Google ID Token 签名，不能信任客户端传来的用户信息
+// 参考: https://developers.google.com/identity/gsi/web/guides/verify-google-id-token
 func (h *AuthHandler) GoogleTokenLogin(c *gin.Context) {
 	var req struct {
 		Credential string `json:"credential" binding:"required"`
-		Name       string `json:"name"`
-		Email      string `json:"email"`
-		Picture    string `json:"picture"`
-		GoogleID   string `json:"google_id"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -101,7 +100,25 @@ func (h *AuthHandler) GoogleTokenLogin(c *gin.Context) {
 		return
 	}
 
-	user, err := h.findOrCreateUser(req.GoogleID, req.Email, req.Name, req.Picture)
+	// 用 Google 公钥验证 ID Token 签名，防止伪造
+	payload, err := idtoken.Validate(context.Background(), req.Credential, h.cfg.GoogleClientID)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid Google token"})
+		return
+	}
+
+	// 从验证结果中提取用户信息，而非信任客户端传来的数据
+	googleID, _ := payload.Claims["sub"].(string)
+	email, _ := payload.Claims["email"].(string)
+	name, _ := payload.Claims["name"].(string)
+	picture, _ := payload.Claims["picture"].(string)
+
+	if googleID == "" || email == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid token claims"})
+		return
+	}
+
+	user, err := h.findOrCreateUser(googleID, email, name, picture)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process user"})
 		return

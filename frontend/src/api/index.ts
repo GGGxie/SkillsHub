@@ -110,8 +110,8 @@ export const api = {
     get: (id: number | string) => request<Article>(`/articles/${id}`),
   },
   auth: {
-    googleToken: (data: { credential: string; name: string; email: string; picture: string; google_id: string }) =>
-      request<{ token: string; user: User }>('/auth/google/token', { method: 'POST', body: JSON.stringify(data) }),
+    googleToken: (credential: string) =>
+      request<{ token: string; user: User }>('/auth/google/token', { method: 'POST', body: JSON.stringify({ credential }) }),
     me: () => request<User>('/auth/me'),
   },
 }

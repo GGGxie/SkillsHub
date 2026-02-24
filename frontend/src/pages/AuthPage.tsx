@@ -18,15 +18,7 @@ export default function AuthPage() {
   const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
     if (!credentialResponse.credential) return
     try {
-      // 解析 Google ID Token（JWT）获取用户信息
-      const payload = JSON.parse(atob(credentialResponse.credential.split('.')[1]))
-      const { token, user } = await api.auth.googleToken({
-        credential: credentialResponse.credential,
-        name: payload.name,
-        email: payload.email,
-        picture: payload.picture,
-        google_id: payload.sub,
-      })
+      const { token, user } = await api.auth.googleToken(credentialResponse.credential)
       login(token, user)
       navigate('/')
     } catch {

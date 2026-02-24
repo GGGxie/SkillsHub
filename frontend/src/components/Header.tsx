@@ -2,13 +2,34 @@ import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Globe, Menu, X } from 'lucide-react'
 import { useState } from 'react'
+import { GoogleLogin, CredentialResponse } from '@react-oauth/google'
 import { useAuth } from '../hooks/useAuth'
+import { api } from '../api'
 
 export default function Header() {
   const { t, i18n } = useTranslation()
-  const { user, logout } = useAuth()
+  const { user, login, logout } = useAuth()
   const location = useLocation()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [loginError, setLoginError] = useState('')
+
+  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
+    if (!credentialResponse.credential) return
+    try {
+      const payload = JSON.parse(atob(credentialResponse.credential.split('.')[1]))
+      const { token, user: u } = await api.auth.googleToken({
+        credential: credentialResponse.credential,
+        name: payload.name,
+        email: payload.email,
+        picture: payload.picture,
+        google_id: payload.sub,
+      })
+      login(token, u)
+      setLoginError('')
+    } catch {
+      setLoginError('登录失败，请重试')
+    }
+  }
 
   const toggleLang = () => {
     const next = i18n.language === 'en' ? 'zh' : 'en'
@@ -74,7 +95,7 @@ export default function Header() {
                   {user.avatar ? (
                     <img src={user.avatar} alt="" className="w-8 h-8 rounded-full" />
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-sm font-medium">
+                    <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-sm font-medium">
                       {user.name[0]}
                     </div>
                   )}
@@ -88,12 +109,18 @@ export default function Header() {
                 </button>
               </div>
             ) : (
-              <Link
-                to="/auth"
-                className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                {t('nav.login')}
-              </Link>
+              <div className="flex flex-col items-end gap-1">
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={() => setLoginError('登录失败，请重试')}
+                  useOneTap
+                  theme="outline"
+                  shape="rectangular"
+                  size="medium"
+                  text="signin_with"
+                />
+                {loginError && <p className="text-xs text-red-500">{loginError}</p>}
+              </div>
             )}
           </div>
 
@@ -134,13 +161,31 @@ export default function Header() {
                 </button>
               </div>
               {user ? (
-                <button onClick={logout} className="px-3 py-2 text-sm text-left text-gray-600">
-                  {t('nav.logout')}
-                </button>
+                <div className="flex items-center justify-between px-3 py-2">
+                  <div className="flex items-center gap-2">
+                    {user.avatar
+                      ? <img src={user.avatar} alt="" className="w-7 h-7 rounded-full" />
+                      : <div className="w-7 h-7 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-xs font-medium">{user.name[0]}</div>
+                    }
+                    <span className="text-sm font-medium text-gray-700">{user.name}</span>
+                  </div>
+                  <button onClick={logout} className="text-sm text-gray-500">
+                    {t('nav.logout')}
+                  </button>
+                </div>
               ) : (
-                <Link to="/auth" onClick={() => setMobileOpen(false)} className="px-3 py-2 text-sm text-gray-600">
-                  {t('nav.login')}
-                </Link>
+                <div className="px-3 py-2">
+                  <GoogleLogin
+                    onSuccess={handleGoogleSuccess}
+                    onError={() => setLoginError('登录失败，请重试')}
+                    theme="outline"
+                    shape="rectangular"
+                    size="medium"
+                    text="signin_with"
+                    width="280"
+                  />
+                  {loginError && <p className="text-xs text-red-500 mt-1">{loginError}</p>}
+                </div>
               )}
             </nav>
           </div>

@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Globe, Menu, X } from 'lucide-react'
 import { useState } from 'react'
-import { GoogleLogin, CredentialResponse } from '@react-oauth/google'
+import { GoogleLogin, CredentialResponse, useGoogleOneTapLogin } from '@react-oauth/google'
 import { useAuth } from '../hooks/useAuth'
 import { api } from '../api'
 
@@ -32,6 +32,13 @@ export default function Header() {
       setLoginError(t('auth.googleError'))
     }
   }
+
+  // 顶层注册 One Tap，不受条件渲染影响，未登录时自动弹出账号识别框
+  useGoogleOneTapLogin({
+    onSuccess: handleGoogleSuccess,
+    onError: () => setLoginError(t('auth.googleError')),
+    disabled: !!user,
+  })
 
   const toggleLang = () => {
     const next = i18n.language === 'en' ? 'zh' : 'en'
@@ -116,7 +123,6 @@ export default function Header() {
                   key={googleLocale}
                   onSuccess={handleGoogleSuccess}
                   onError={() => setLoginError(t('auth.googleError'))}
-                  useOneTap
                   locale={googleLocale}
                   theme="outline"
                   shape="rectangular"

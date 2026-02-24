@@ -137,6 +137,7 @@ start_backend() {
     [ -f "$BACKEND_BIN" ] || build_backend
 
     cd "$BACKEND_DIR"
+    set -a; source .env; set +a
     nohup "$BACKEND_BIN" > "$BACKEND_LOG" 2>&1 &
     echo $! > "$BACKEND_PID_FILE"
     sleep 2

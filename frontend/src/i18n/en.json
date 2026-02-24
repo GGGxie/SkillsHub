@@ -1,0 +1,127 @@
+{
+  "nav": {
+    "discover": "Discover",
+    "learn": "Learn",
+    "help": "Help",
+    "submit": "Submit Skill",
+    "login": "Login",
+    "logout": "Logout",
+    "profile": "Profile"
+  },
+  "hero": {
+    "title": "Discover AI Skills",
+    "subtitle": "Explore modular capabilities to enhance AI's functionality"
+  },
+  "home": {
+    "featured": "Featured Skills",
+    "hottest": "Hottest",
+    "latest": "Latest",
+    "search": "Search skills by name or description...",
+    "textOnly": "Text Only",
+    "imageText": "Image + Text",
+    "noResults": "No skills found",
+    "viewAll": "View All",
+    "likes": "likes",
+    "views": "views",
+    "prev": "Previous",
+    "next": "Next"
+  },
+  "skill": {
+    "back": "Back",
+    "category": "Category",
+    "type": "Type",
+    "created": "Created",
+    "updated": "Last Updated",
+    "author": "Author",
+    "tags": "Tags",
+    "comments": "Comments",
+    "loginToComment": "Please log in to comment",
+    "addComment": "Add a comment...",
+    "submitComment": "Submit",
+    "like": "Like",
+    "share": "Share",
+    "download": "Download Package"
+  },
+  "auth": {
+    "title": "Secure Sign In",
+    "subtitle": "Pick the fastest option",
+    "google": "Continue with Google",
+    "or": "or continue with email",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "emailPlaceholder": "your@email.com",
+    "passwordPlaceholder": "Enter your password"
+  },
+  "learn": {
+    "title": "Learn About Skills",
+    "subtitle": "Articles, tutorials, and resources to help you master AI Skills",
+    "readMore": "Read More"
+  },
+  "help": {
+    "title": "Help & Documentation",
+    "subtitle": "Everything you need to know about AI Skills Hub",
+    "gettingStarted": "Getting Started",
+    "steps": {
+      "browse": "Browse",
+      "browseDesc": "Explore the skill library to find what you need",
+      "download": "Download",
+      "downloadDesc": "Download the skill package to your local machine",
+      "install": "Install",
+      "installDesc": "Follow the installation guide to set up the skill",
+      "use": "Use",
+      "useDesc": "Start using the skill to enhance your AI workflow"
+    },
+    "faq": "Frequently Asked Questions",
+    "faqs": {
+      "q1": "What is an AI Skill?",
+      "a1": "An AI Skill is a modular capability that can be added to AI assistants to enhance their functionality in specific areas.",
+      "q2": "How do I create a skill?",
+      "a2": "You can create a skill by clicking 'Submit Skill' in the navigation bar and filling out the form with your skill's details.",
+      "q3": "How do I submit a skill?",
+      "a3": "After creating your skill, click 'Submit Skill', fill in the required information, and submit for review.",
+      "q4": "What are the file size limits?",
+      "a4": "Individual skill packages should not exceed 10MB. If you need more space, consider splitting into multiple skills.",
+      "q5": "How do I use a skill?",
+      "a5": "Download the skill package, follow the installation instructions, and configure it according to the documentation.",
+      "q6": "Can I update my submitted skill?",
+      "a6": "Yes, you can update your skills at any time through your profile page."
+    },
+    "contact": "Contact Us",
+    "contactEmail": "Email",
+    "contactGithub": "GitHub",
+    "contactCommunity": "Community"
+  },
+  "submit": {
+    "title": "Submit a New Skill",
+    "subtitle": "Share your AI skill with the community",
+    "titleLabel": "Title (English)",
+    "titleZHLabel": "Title (Chinese)",
+    "descLabel": "Description (English)",
+    "descZHLabel": "Description (Chinese)",
+    "categoryLabel": "Category",
+    "iconLabel": "Icon (emoji)",
+    "contentLabel": "Content / Documentation (English)",
+    "contentZHLabel": "Content / Documentation (Chinese)",
+    "tagsLabel": "Tags (comma separated)",
+    "typeLabel": "Skill Type",
+    "submitBtn": "Submit Skill",
+    "loginRequired": "Please log in to submit a skill",
+    "success": "Skill submitted successfully!"
+  },
+  "footer": {
+    "description": "A community-driven AI skills repository for discovering, creating, learning, and sharing.",
+    "product": "Product",
+    "legal": "Legal",
+    "connect": "Connect",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "rights": "All rights reserved."
+  },
+  "notFound": {
+    "title": "404",
+    "message": "Oops! Page not found",
+    "back": "Return to Home"
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "nav": {
+    "discover": "发现",
+    "learn": "学习",
+    "help": "帮助",
+    "submit": "提交技能",
+    "login": "登录",
+    "logout": "退出",
+    "profile": "个人中心"
+  },
+  "hero": {
+    "title": "发现 AI 技能",
+    "subtitle": "探索模块化能力，增强 AI 的功能"
+  },
+  "home": {
+    "featured": "精选技能",
+    "hottest": "最热门",
+    "latest": "最新",
+    "search": "按名称或描述搜索技能...",
+    "textOnly": "纯文本",
+    "imageText": "图文模式",
+    "noResults": "未找到技能",
+    "viewAll": "查看全部",
+    "likes": "点赞",
+    "views": "浏览",
+    "prev": "上一页",
+    "next": "下一页"
+  },
+  "skill": {
+    "back": "返回",
+    "category": "分类",
+    "type": "类型",
+    "created": "创建时间",
+    "updated": "更新时间",
+    "author": "作者",
+    "tags": "标签",
+    "comments": "评论",
+    "loginToComment": "请登录后评论",
+    "addComment": "添加评论...",
+    "submitComment": "提交",
+    "like": "点赞",
+    "share": "分享",
+    "download": "下载包"
+  },
+  "auth": {
+    "title": "安全登录",
+    "subtitle": "选择最快的方式",
+    "google": "使用 Google 登录",
+    "or": "或使用邮箱登录",
+    "email": "邮箱",
+    "password": "密码",
+    "signIn": "登录",
+    "signUp": "注册",
+    "emailPlaceholder": "your@email.com",
+    "passwordPlaceholder": "输入密码"
+  },
+  "learn": {
+    "title": "学习技能",
+    "subtitle": "文章、教程和资源，帮助你掌握 AI 技能",
+    "readMore": "阅读更多"
+  },
+  "help": {
+    "title": "帮助与文档",
+    "subtitle": "关于 AI Skills Hub 你需要知道的一切",
+    "gettingStarted": "快速入门",
+    "steps": {
+      "browse": "浏览",
+      "browseDesc": "浏览技能库，找到你需要的技能",
+      "download": "下载",
+      "downloadDesc": "将技能包下载到本地",
+      "install": "安装",
+      "installDesc": "按照安装指南配置技能",
+      "use": "使用",
+      "useDesc": "开始使用技能来增强你的 AI 工作流"
+    },
+    "faq": "常见问题",
+    "faqs": {
+      "q1": "什么是 AI 技能？",
+      "a1": "AI 技能是一种模块化能力，可以添加到 AI 助手中以增强其在特定领域的功能。",
+      "q2": "如何创建技能？",
+      "a2": "点击导航栏中的「提交技能」按钮，填写技能详情即可创建技能。",
+      "q3": "如何提交技能？",
+      "a3": "创建完技能后，点击「提交技能」，填写必要信息，提交审核。",
+      "q4": "文件大小限制是多少？",
+      "a4": "单个技能包不应超过 10MB。如果需要更多空间，可以考虑拆分为多个技能。",
+      "q5": "如何使用技能？",
+      "a5": "下载技能包，按照安装说明操作，并根据文档进行配置。",
+      "q6": "可以更新已提交的技能吗？",
+      "a6": "可以，你可以随时在个人中心更新你的技能。"
+    },
+    "contact": "联系我们",
+    "contactEmail": "邮箱",
+    "contactGithub": "GitHub",
+    "contactCommunity": "社区"
+  },
+  "submit": {
+    "title": "提交新技能",
+    "subtitle": "与社区分享你的 AI 技能",
+    "titleLabel": "标题（英文）",
+    "titleZHLabel": "标题（中文）",
+    "descLabel": "描述（英文）",
+    "descZHLabel": "描述（中文）",
+    "categoryLabel": "分类",
+    "iconLabel": "图标（emoji）",
+    "contentLabel": "内容/文档（英文）",
+    "contentZHLabel": "内容/文档（中文）",
+    "tagsLabel": "标签（逗号分隔）",
+    "typeLabel": "技能类型",
+    "submitBtn": "提交技能",
+    "loginRequired": "请先登录再提交技能",
+    "success": "技能提交成功！"
+  },
+  "footer": {
+    "description": "一个社区驱动的 AI 技能仓库，用于发现、创建、学习和分享。",
+    "product": "产品",
+    "legal": "法律",
+    "connect": "联系",
+    "terms": "服务条款",
+    "privacy": "隐私政策",
+    "rights": "保留所有权利。"
+  },
+  "notFound": {
+    "title": "404",
+    "message": "糟糕！页面未找到",
+    "back": "返回首页"
+  }
+}

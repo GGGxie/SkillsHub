@@ -1,0 +1,23 @@
+# Backend
+backend/server
+backend/*.db
+backend/*.db-shm
+backend/*.db-wal
+backend/main
+backend/.env
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/tsconfig.tsbuildinfo
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Playwright
+.playwright-mcp/

@@ -152,12 +152,18 @@ func seedData(db *sql.DB) {
 				"## 如何使用\n\n" +
 				"### 在 Cursor IDE 中\n" +
 				"1. 将 Skill 保存为 `.md` 文件到 `~/.cursor/skills/`（个人）或 `.cursor/skills/`（项目）\n" +
-				"2. AI 助手会自动发现并应用相关 Skill\n\n" +
+				"2. AI 助手会自动发现并应用相关 Skill\n" +
+				"3. 你也可以在提示词中手动引用 Skill\n\n" +
 				"### 作为提示词\n" +
 				"1. 复制 Skill 内容\n" +
 				"2. 粘贴为系统提示或指令前缀\n" +
-				"3. 然后输入你的具体任务\n",
-			3200},
+				"3. 然后输入你的具体任务\n\n" +
+				"## 最佳实践\n\n" +
+				"- **具体明确** — Skill 在输入清晰时效果最好\n" +
+				"- **迭代优化** — 从 Skill 的输出开始，逐步改进\n" +
+				"- **组合使用** — 在代码生成后使用代码审查 Skill\n" +
+				"- **自定义** — 根据团队规范调整 Skill\n",
+			45},
 		{"How to Create Your Own Skill", "如何创建自己的技能",
 			"Step-by-step guide to creating and publishing AI Skills", "创建和发布AI技能的分步指南",
 			"Getting Started",
@@ -194,16 +200,28 @@ func seedData(db *sql.DB) {
 				"- 目标用户是谁？\n" +
 				"- 你的方法比通用提示词好在哪里？\n\n" +
 				"## 步骤 2：编写 Skill\n\n" +
-				"好的 Skill 包含：清晰的指令、模板、示例和检查清单。\n\n" +
+				"好的 Skill 包含：\n\n" +
+				"1. **清晰的指令** — 逐步说明要做什么\n" +
+				"2. **模板** — 结构化的输出格式\n" +
+				"3. **示例** — 展示输入 → 输出对\n" +
+				"4. **检查清单** — 验证标准\n\n" +
+				"保持简洁，目标控制在 500 行以内。需要更多细节时，链接到参考文件。\n\n" +
 				"## 步骤 3：测试\n\n" +
-				"用不同的输入测试，确保处理边界情况，输出一致。\n\n" +
+				"用不同的输入测试你的 Skill：\n" +
+				"- 能否处理边界情况？\n" +
+				"- 输出是否一致？\n" +
+				"- 新用户能否理解如何使用？\n\n" +
 				"## 步骤 4：分享\n\n" +
-				"在 SkillsHub 上分享你的 Skill，获得社区反馈！\n",
-			2800},
-		{"Claude Skills vs MCP", "Claude技能 vs MCP",
-			"Understanding the differences between Claude Skills and MCP", "了解Claude技能和MCP之间的区别",
+				"在 SkillsHub 上分享你的 Skill：\n" +
+				"1. 点击网站上的 \"Submit Skill\"\n" +
+				"2. 填写标题、描述和内容\n" +
+				"3. 添加相关分类标签\n" +
+				"4. 发布并获得社区反馈！\n",
+			32},
+		{"AI Skills vs MCP", "AI 技能 vs MCP",
+			"Understanding the differences between AI Skills and MCP", "了解 AI 技能和 MCP 之间的区别",
 			"Integration",
-			"# Claude Skills vs MCP\n\n" +
+			"# AI 技能 vs MCP\n\n" +
 				"Both Skills and MCP (Model Context Protocol) extend AI capabilities, but they work differently.\n\n" +
 				"## Quick Comparison\n\n" +
 				"| Aspect | Skills | MCP |\n" +
@@ -235,18 +253,23 @@ func seedData(db *sql.DB) {
 				"| 是什么 | 指令集（文本） | 工具/API 连接（代码） |\n" +
 				"| 如何工作 | 基于提示的引导 | 函数调用接口 |\n" +
 				"| 设置 | 放置 .md 文件 | 运行服务器进程 |\n" +
-				"| 能力 | 知识、模板、工作流 | 外部操作（数据库、API） |\n\n" +
+				"| 能力 | 知识、模板、工作流 | 外部操作（数据库、API） |\n" +
+				"| 复杂度 | 低（仅 Markdown） | 中等（需要服务器） |\n\n" +
 				"## 何时使用 Skills\n\n" +
 				"- 教 AI **如何**处理任务\n" +
 				"- 编码团队规范和最佳实践\n" +
-				"- 提供模板和输出格式\n\n" +
+				"- 提供模板和输出格式\n" +
+				"- 适用于多种任务的通用知识\n\n" +
 				"## 何时使用 MCP\n\n" +
 				"- AI 需要**执行操作**（查询数据库、调用 API）\n" +
 				"- 需要实时数据访问\n" +
-				"- 集成外部服务\n\n" +
+				"- 集成外部服务\n" +
+				"- 有状态的复杂工具链\n\n" +
 				"## 两全其美\n\n" +
-				"结合使用！用 Skill 定义工作流，用 MCP 服务器执行它。\n",
-			1950},
+				"结合使用！用 Skill 定义工作流，用 MCP 服务器执行它：\n\n" +
+				"- **Skill**：\"审查 PR 时，检查安全问题、运行测试、验证覆盖率\"\n" +
+				"- **MCP**：GitHub API 获取 PR 差异，测试运行器执行测试，覆盖工具检查指标\n",
+			24},
 	}
 
 	for _, a := range articles {

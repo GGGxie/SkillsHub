@@ -13,7 +13,7 @@ var seedSkills = []seedSkill{
 	{
 		title: "Code Review Assistant", titleZH: "代码审查助手",
 		desc: "Automated code review with best practices and security checks", descZH: "自动化代码审查，包含最佳实践和安全检查",
-		category: "Coding & Development", icon: "🔍", tags: "code,review,security,best-practices", skillType: "ai-powered", featured: 1, likes: 128, views: 2340,
+		category: "Coding & Development", icon: "🔍", tags: "code,review,security,best-practices", skillType: "ai-powered", featured: 1, likes: 7, views: 48,
 		content: "# Code Review Assistant\n\n" +
 			"Perform systematic code reviews covering security, correctness, performance, and maintainability.\n\n" +
 			"## Review Checklist\n\n" +
@@ -79,12 +79,20 @@ var seedSkills = []seedSkill{
 			"每个问题的严重程度：\n" +
 			"- 🔴 **严重**：必须修复 — 安全漏洞、数据丢失、崩溃\n" +
 			"- 🟡 **警告**：建议修复 — 性能问题、潜在 bug\n" +
-			"- 🟢 **建议**：可选改进 — 可读性、风格优化\n",
+			"- 🟢 **建议**：可选改进 — 可读性、风格优化\n\n" +
+			"## 示例\n\n" +
+			cb + "diff\n" +
+			"- password = request.form['password']\n" +
+			"- db.execute(f\"SELECT * FROM users WHERE pass='{password}'\")\n" +
+			"+ password_hash = hash_password(request.form['password'])\n" +
+			"+ db.execute(\"SELECT * FROM users WHERE pass=?\", (password_hash,))\n" +
+			cb + "\n\n" +
+			"🔴 **严重**：SQL 注入 + 明文密码存储。使用参数化查询并对密码加密。\n",
 	},
 	{
 		title: "Blog Post Writer", titleZH: "博客文章写手",
 		desc: "Generate well-structured blog posts with SEO optimization", descZH: "生成结构良好的博客文章，包含SEO优化",
-		category: "Writing & Content", icon: "✍️", tags: "writing,blog,seo,content-marketing", skillType: "general", featured: 1, likes: 96, views: 1850,
+		category: "Writing & Content", icon: "✍️", tags: "writing,blog,seo,content-marketing", skillType: "general", featured: 1, likes: 6, views: 38,
 		content: "# Blog Post Writer\n\n" +
 			"Generate well-structured, SEO-optimized blog posts that engage readers and rank well.\n\n" +
 			"## Article Structure\n\n" +
@@ -146,12 +154,18 @@ var seedSkills = []seedSkill{
 			"- [ ] Meta 描述：< 160 字符，包含关键词，有 CTA\n" +
 			"- [ ] 2-3 个内链 + 1-2 个权威外链\n" +
 			"- [ ] 图片有描述性 alt 文本\n" +
-			"- [ ] URL 简短且包含关键词\n",
+			"- [ ] URL 简短且包含关键词\n\n" +
+			"## 语气指南\n\n" +
+			"| 受众 | 语气 | 示例 |\n" +
+			"|------|------|------|\n" +
+			"| 开发者 | 技术性、简洁 | \"使用 Redis 缓存可将延迟降低 40%\" |\n" +
+			"| 商务 | 专业、关注效益 | \"此方案每周为团队节省 10+ 小时\" |\n" +
+			"| 大众 | 友好、对话式 | \"把它想象成整理你的数字工具箱\" |\n",
 	},
 	{
 		title: "Data Analysis Pipeline", titleZH: "数据分析流水线",
 		desc: "Automated data analysis with visualization and reporting", descZH: "自动化数据分析，包含可视化和报告",
-		category: "Data & Analytics", icon: "📊", tags: "data,analysis,visualization,python,pandas", skillType: "ai-powered", featured: 1, likes: 84, views: 1620,
+		category: "Data & Analytics", icon: "📊", tags: "data,analysis,visualization,python,pandas", skillType: "ai-powered", featured: 1, likes: 5, views: 33,
 		content: "# Data Analysis Pipeline\n\n" +
 			"A step-by-step workflow for loading, cleaning, analyzing, and visualizing data with Python.\n\n" +
 			"## Workflow\n\n" +
@@ -220,15 +234,28 @@ var seedSkills = []seedSkill{
 			"    total=('value', 'sum')\n" +
 			").sort_values('total', ascending=False)\n" +
 			cb + "\n\n" +
-			"### 步骤 4：可视化\n" +
-			"使用 matplotlib/seaborn 生成图表，确保有清晰的标签和标题。\n\n" +
+			"### 步骤 4：可视化\n\n" +
+			cb + "python\n" +
+			"import matplotlib.pyplot as plt\n" +
+			"import seaborn as sns\n\n" +
+			"fig, axes = plt.subplots(1, 3, figsize=(15, 5))\n" +
+			"sns.barplot(data=summary.reset_index(), x='category', y='total', ax=axes[0])\n" +
+			"sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', ax=axes[1])\n" +
+			"df['value'].hist(bins=30, ax=axes[2])\n" +
+			"plt.tight_layout()\n" +
+			"plt.savefig('analysis.png', dpi=150)\n" +
+			cb + "\n\n" +
 			"### 步骤 5：生成报告\n" +
-			"包含关键发现、统计显著性、可视化图表和可操作的建议。\n",
+			"生成包含以下内容的总结报告：\n" +
+			"- 关键发现（前 3-5 个洞察）\n" +
+			"- 结果的统计显著性\n" +
+			"- 带有清晰标签的可视化图表\n" +
+			"- 可操作的建议\n",
 	},
 	{
 		title: "API Integration Helper", titleZH: "API 集成助手",
 		desc: "Simplify REST API integration with auto-generated client code", descZH: "简化 REST API 集成，自动生成客户端代码",
-		category: "Coding & Development", icon: "🔗", tags: "api,integration,rest,http,typescript", skillType: "general", featured: 0, likes: 72, views: 1430,
+		category: "Coding & Development", icon: "🔗", tags: "api,integration,rest,http,typescript", skillType: "general", featured: 0, likes: 4, views: 29,
 		content: "# API Integration Helper\n\n" +
 			"Generate type-safe API client code from endpoint specifications.\n\n" +
 			"## Input Format\n\n" +
@@ -281,6 +308,32 @@ var seedSkills = []seedSkill{
 			"- 请求体/查询参数\n" +
 			"- 预期响应结构\n" +
 			"- 认证方式\n\n" +
+			"## 生成输出\n\n" +
+			"### TypeScript API 客户端\n\n" +
+			cb + "typescript\n" +
+			"interface ApiConfig {\n" +
+			"  baseURL: string;\n" +
+			"  token?: string;\n" +
+			"  timeout?: number;\n" +
+			"}\n\n" +
+			"async function apiRequest<T>(\n" +
+			"  config: ApiConfig,\n" +
+			"  method: string,\n" +
+			"  path: string,\n" +
+			"  body?: unknown\n" +
+			"): Promise<T> {\n" +
+			"  const res = await fetch(`${config.baseURL}${path}`, {\n" +
+			"    method,\n" +
+			"    headers: {\n" +
+			"      'Content-Type': 'application/json',\n" +
+			"      ...(config.token && { Authorization: `Bearer ${config.token}` }),\n" +
+			"    },\n" +
+			"    body: body ? JSON.stringify(body) : undefined,\n" +
+			"  });\n" +
+			"  if (!res.ok) throw new Error(res.statusText);\n" +
+			"  return res.json();\n" +
+			"}\n" +
+			cb + "\n\n" +
 			"## 最佳实践\n\n" +
 			"- 为请求和响应定义 TypeScript 接口\n" +
 			"- 对 5xx 错误实现指数退避重试\n" +
@@ -291,7 +344,7 @@ var seedSkills = []seedSkill{
 	{
 		title: "Email Template Designer", titleZH: "邮件模板设计师",
 		desc: "Create responsive email templates with dynamic content", descZH: "创建响应式邮件模板，支持动态内容",
-		category: "Design & Creative", icon: "📧", tags: "email,template,design,html,responsive", skillType: "general", featured: 0, likes: 65, views: 1280,
+		category: "Design & Creative", icon: "📧", tags: "email,template,design,html,responsive", skillType: "general", featured: 0, likes: 4, views: 26,
 		content: "# Email Template Designer\n\n" +
 			"Create responsive, cross-client compatible HTML email templates.\n\n" +
 			"## Design Rules\n\n" +
@@ -343,6 +396,30 @@ var seedSkills = []seedSkill{
 			"| 内联 CSS 样式 | 使用外部样式表 |\n" +
 			"| 最大宽度 600px | 全宽流式布局 |\n" +
 			"| 使用网页安全字体 | 使用自定义字体 |\n\n" +
+			"## 模板结构\n\n" +
+			cb + "html\n" +
+			"<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" bgcolor=\"#f4f4f4\">\n" +
+			"  <tr><td align=\"center\">\n" +
+			"    <table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" bgcolor=\"#ffffff\">\n" +
+			"      <!-- 头部 Logo -->\n" +
+			"      <tr><td style=\"padding:20px;text-align:center\">\n" +
+			"        <img src=\"logo.png\" width=\"150\" alt=\"Logo\">\n" +
+			"      </td></tr>\n" +
+			"      <!-- 内容 -->\n" +
+			"      <tr><td style=\"padding:20px 30px;font-family:Arial,sans-serif\">\n" +
+			"        <h1 style=\"color:#333;font-size:24px\">{{title}}</h1>\n" +
+			"        <p style=\"color:#666;font-size:16px;line-height:1.5\">{{body}}</p>\n" +
+			"      </td></tr>\n" +
+			"      <!-- CTA 按钮 -->\n" +
+			"      <tr><td align=\"center\" style=\"padding:20px\">\n" +
+			"        <a href=\"{{cta_url}}\" style=\"background:#007bff;color:#fff;\n" +
+			"          padding:12px 30px;text-decoration:none;border-radius:4px;\n" +
+			"          display:inline-block\">{{cta_text}}</a>\n" +
+			"      </td></tr>\n" +
+			"    </table>\n" +
+			"  </td></tr>\n" +
+			"</table>\n" +
+			cb + "\n\n" +
 			"## 测试清单\n\n" +
 			"- [ ] 在 Gmail、Outlook、Apple Mail 中正确渲染\n" +
 			"- [ ] 图片有 alt 文本和回退背景色\n" +
@@ -353,7 +430,7 @@ var seedSkills = []seedSkill{
 	{
 		title: "Test Case Generator", titleZH: "测试用例生成器",
 		desc: "Auto-generate comprehensive test cases from specifications", descZH: "根据规格说明自动生成全面的测试用例",
-		category: "Coding & Development", icon: "🧪", tags: "testing,automation,quality,jest,pytest", skillType: "ai-powered", featured: 1, likes: 110, views: 2100,
+		category: "Coding & Development", icon: "🧪", tags: "testing,automation,quality,jest,pytest", skillType: "ai-powered", featured: 1, likes: 7, views: 42,
 		content: "# Test Case Generator\n\n" +
 			"Generate comprehensive test cases from function signatures, API specs, or user stories.\n\n" +
 			"## Test Categories\n\n" +
@@ -412,13 +489,51 @@ var seedSkills = []seedSkill{
 			"3. **错误情况** — 无效输入、缺少必填字段\n" +
 			"4. **安全性** — 注入攻击、未授权访问\n" +
 			"5. **性能** — 大数据集、并发请求\n\n" +
+			"## 模板（Jest/TypeScript）\n\n" +
+			cb + "typescript\n" +
+			"describe('UserService.createUser', () => {\n" +
+			"  // 正常路径\n" +
+			"  it('should create user with valid data', async () => {\n" +
+			"    const user = await service.createUser({ name: 'Alice', email: 'a@b.com' });\n" +
+			"    expect(user.id).toBeDefined();\n" +
+			"    expect(user.name).toBe('Alice');\n" +
+			"  });\n\n" +
+			"  // 边界情况\n" +
+			"  it('should handle name at max length (255 chars)', async () => { ... });\n" +
+			"  it('should trim whitespace from email', async () => { ... });\n\n" +
+			"  // 错误情况\n" +
+			"  it('should reject duplicate email', async () => {\n" +
+			"    await service.createUser({ name: 'A', email: 'dup@b.com' });\n" +
+			"    await expect(service.createUser({ name: 'B', email: 'dup@b.com' }))\n" +
+			"      .rejects.toThrow('Email already exists');\n" +
+			"  });\n" +
+			"  it('should reject invalid email format', async () => { ... });\n" +
+			"  it('should reject empty name', async () => { ... });\n" +
+			"});\n" +
+			cb + "\n\n" +
+			"## 模板（Pytest）\n\n" +
+			cb + "python\n" +
+			"import pytest\n\n" +
+			"class TestCreateUser:\n" +
+			"    def test_creates_user_with_valid_data(self, db):\n" +
+			"        user = create_user(name='Alice', email='a@b.com')\n" +
+			"        assert user.id is not None\n\n" +
+			"    def test_rejects_duplicate_email(self, db):\n" +
+			"        create_user(name='A', email='dup@b.com')\n" +
+			"        with pytest.raises(ValueError, match='already exists'):\n" +
+			"            create_user(name='B', email='dup@b.com')\n\n" +
+			"    @pytest.mark.parametrize('email', ['', 'invalid', '@no-user.com', 'no@'])\n" +
+			"    def test_rejects_invalid_email(self, db, email):\n" +
+			"        with pytest.raises(ValueError):\n" +
+			"            create_user(name='Test', email=email)\n" +
+			cb + "\n\n" +
 			"## 覆盖策略\n\n" +
 			"目标：80%+ 行覆盖率，关键路径（认证、支付、数据变更）100% 分支覆盖。\n",
 	},
 	{
 		title: "Translation Assistant", titleZH: "翻译助手",
 		desc: "Multi-language translation with context awareness", descZH: "多语言翻译，支持上下文感知",
-		category: "Writing & Content", icon: "🌐", tags: "translation,language,i18n,localization", skillType: "ai-powered", featured: 0, likes: 58, views: 980,
+		category: "Writing & Content", icon: "🌐", tags: "translation,language,i18n,localization", skillType: "ai-powered", featured: 0, likes: 3, views: 20,
 		content: "# Translation Assistant\n\n" +
 			"Context-aware translation that preserves meaning, tone, and cultural nuance.\n\n" +
 			"## Translation Principles\n\n" +
@@ -458,14 +573,23 @@ var seedSkills = []seedSkill{
 			"4. **术语一致** — 技术术语保持统一\n" +
 			"5. **自然流畅** — 译文应读起来像母语文本\n\n" +
 			"## 上下文规则\n\n" +
-			"| 场景 | 规则 |\n" +
-			"|------|------|\n" +
-			"| UI 字符串 | 简洁，使用标准 UX 用语 |\n" +
-			"| 文档 | 正式、精确 |\n" +
-			"| 营销 | 有说服力，本地化适配 |\n" +
-			"| 法律 | 精确含义，不做引申 |\n\n" +
+			"| 场景 | 规则 | 示例 |\n" +
+			"|------|------|------|\n" +
+			"| UI 字符串 | 简洁，使用标准 UX 用语 | \"Submit\" → \"提交\"（而非\"递交\"） |\n" +
+			"| 文档 | 正式、精确 | 中文使用\"您\"而非\"你\" |\n" +
+			"| 营销 | 有说服力，本地化适配 | 调整 CTA 适配本地习惯 |\n" +
+			"| 法律 | 精确含义，不做引申 | 保留法律术语 |\n" +
+			"| 聊天/日常 | 自然、口语化 | 使用日常对话语言 |\n\n" +
 			"## 开发者指南（i18n）\n\n" +
-			"翻译 JSON 语言包时：\n" +
+			"翻译 JSON 语言包时：\n\n" +
+			cb + "json\n" +
+			"{\n" +
+			"  \"greeting\": \"Hello, {{name}}!\",\n" +
+			"  \"items_count\": \"{{count}} item | {{count}} items\",\n" +
+			"  \"error.network\": \"Connection failed. Please try again.\"\n" +
+			"}\n" +
+			cb + "\n\n" +
+			"规则：\n" +
 			"- 保留所有 `{{变量}}` 和占位符\n" +
 			"- 处理目标语言的复数规则\n" +
 			"- JSON key 保持不变\n" +
@@ -474,7 +598,7 @@ var seedSkills = []seedSkill{
 	{
 		title: "Task Automation Bot", titleZH: "任务自动化机器人",
 		desc: "Automate repetitive tasks with customizable workflows", descZH: "自动化重复任务，支持可自定义工作流",
-		category: "Automation", icon: "🤖", tags: "automation,workflow,scripting,productivity", skillType: "general", featured: 0, likes: 92, views: 1760,
+		category: "Automation", icon: "🤖", tags: "automation,workflow,scripting,productivity", skillType: "general", featured: 0, likes: 6, views: 36,
 		content: "# Task Automation Bot\n\n" +
 			"Design and implement automation workflows for repetitive tasks.\n\n" +
 			"## Workflow Design Pattern\n\n" +
@@ -522,8 +646,25 @@ var seedSkills = []seedSkill{
 			"- 什么触发它？（定时、事件驱动、手动）\n" +
 			"- 输入和输出是什么？\n" +
 			"- 可能的失败模式？\n\n" +
-			"### 2. 设计流水线\n" +
-			"定义触发器、步骤和错误处理。\n\n" +
+			"### 2. 设计流水线\n\n" +
+			cb + "yaml\n" +
+			"# workflow.yml\n" +
+			"name: daily-report\n" +
+			"trigger:\n" +
+			"  schedule: '0 9 * * *'  # 每天早上 9 点\n" +
+			"steps:\n" +
+			"  - name: fetch-data\n" +
+			"    action: http.get\n" +
+			"    url: https://api.example.com/metrics\n" +
+			"  - name: process\n" +
+			"    action: transform\n" +
+			"    input: ${{ steps.fetch-data.output }}\n" +
+			"  - name: notify\n" +
+			"    action: slack.send\n" +
+			"    channel: '#reports'\n" +
+			"    message: ${{ steps.process.output }}\n" +
+			"    on_failure: email.alert\n" +
+			cb + "\n\n" +
 			"### 3. 错误处理\n" +
 			"- **重试逻辑**：3 次尝试，指数退避\n" +
 			"- **超时**：设置最大执行时间\n" +
@@ -541,7 +682,7 @@ var seedSkills = []seedSkill{
 	{
 		title: "UI Component Builder", titleZH: "UI 组件构建器",
 		desc: "Generate React/Vue components from design descriptions", descZH: "根据设计描述生成 React/Vue 组件",
-		category: "Design & Creative", icon: "🎨", tags: "ui,components,react,vue,tailwind", skillType: "ai-powered", featured: 1, likes: 145, views: 2680,
+		category: "Design & Creative", icon: "🎨", tags: "ui,components,react,vue,tailwind", skillType: "ai-powered", featured: 1, likes: 9, views: 54,
 		content: "# UI Component Builder\n\n" +
 			"Generate production-ready React or Vue components from natural language descriptions.\n\n" +
 			"## Component Quality Standards\n\n" +
@@ -607,6 +748,47 @@ var seedSkills = []seedSkill{
 			"- 响应式设计（移动优先）\n" +
 			"- 加载和错误状态\n" +
 			"- 干净的、可组合的 API\n\n" +
+			"## React 模板\n\n" +
+			cb + "tsx\n" +
+			"interface ButtonProps {\n" +
+			"  variant?: 'primary' | 'secondary' | 'danger';\n" +
+			"  size?: 'sm' | 'md' | 'lg';\n" +
+			"  loading?: boolean;\n" +
+			"  disabled?: boolean;\n" +
+			"  children: React.ReactNode;\n" +
+			"  onClick?: () => void;\n" +
+			"}\n\n" +
+			"export function Button({\n" +
+			"  variant = 'primary',\n" +
+			"  size = 'md',\n" +
+			"  loading = false,\n" +
+			"  disabled = false,\n" +
+			"  children,\n" +
+			"  onClick,\n" +
+			"}: ButtonProps) {\n" +
+			"  return (\n" +
+			"    <button\n" +
+			"      className={cn(styles.base, styles[variant], styles[size])}\n" +
+			"      disabled={disabled || loading}\n" +
+			"      onClick={onClick}\n" +
+			"      aria-busy={loading}\n" +
+			"    >\n" +
+			"      {loading ? <Spinner size={size} /> : children}\n" +
+			"    </button>\n" +
+			"  );\n" +
+			"}\n" +
+			cb + "\n\n" +
+			"## 设计系统令牌\n\n" +
+			"使用一致的间距和颜色令牌：\n\n" +
+			"| 令牌 | 值 | 用途 |\n" +
+			"|------|-----|------|\n" +
+			"| `space-xs` | 4px | 图标间距 |\n" +
+			"| `space-sm` | 8px | 紧凑内边距 |\n" +
+			"| `space-md` | 16px | 默认内边距 |\n" +
+			"| `space-lg` | 24px | 区域间距 |\n" +
+			"| `radius-sm` | 4px | 按钮、输入框 |\n" +
+			"| `radius-md` | 8px | 卡片 |\n" +
+			"| `radius-lg` | 16px | 模态框 |\n\n" +
 			"## 无障碍清单\n\n" +
 			"- [ ] 颜色对比度 ≥ 4.5:1\n" +
 			"- [ ] 所有交互元素可通过键盘聚焦\n" +
@@ -617,7 +799,7 @@ var seedSkills = []seedSkill{
 	{
 		title: "Database Schema Designer", titleZH: "数据库架构设计师",
 		desc: "Design optimal database schemas with relationship mapping", descZH: "设计最优数据库架构，支持关系映射",
-		category: "Coding & Development", icon: "🗄️", tags: "database,schema,design,sql,migration", skillType: "general", featured: 0, likes: 78, views: 1350,
+		category: "Coding & Development", icon: "🗄️", tags: "database,schema,design,sql,migration", skillType: "general", featured: 0, likes: 5, views: 28,
 		content: "# Database Schema Designer\n\n" +
 			"Design normalized, performant database schemas from business requirements.\n\n" +
 			"## Design Process\n\n" +
@@ -673,6 +855,39 @@ var seedSkills = []seedSkill{
 			"3. **规范化到 3NF**，然后针对性能选择性反规范化\n" +
 			"4. **选择数据类型**（最小够用类型）\n" +
 			"5. **添加索引**（针对常见查询模式）\n\n" +
+			"## 架构模板\n\n" +
+			cb + "sql\n" +
+			"-- 使用 UUID 或 BIGINT 作为主键（而非 INT）\n" +
+			"-- 始终包含 created_at, updated_at\n" +
+			"-- 默认使用 NOT NULL，仅在需要时允许 NULL\n\n" +
+			"CREATE TABLE users (\n" +
+			"  id         BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,\n" +
+			"  email      VARCHAR(255) NOT NULL UNIQUE,\n" +
+			"  name       VARCHAR(100) NOT NULL,\n" +
+			"  status     VARCHAR(20) NOT NULL DEFAULT 'active'\n" +
+			"             CHECK (status IN ('active','suspended','deleted')),\n" +
+			"  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),\n" +
+			"  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()\n" +
+			");\n\n" +
+			"-- M:N 关系通过关联表实现\n" +
+			"CREATE TABLE user_roles (\n" +
+			"  user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,\n" +
+			"  role_id BIGINT NOT NULL REFERENCES roles(id) ON DELETE CASCADE,\n" +
+			"  PRIMARY KEY (user_id, role_id)\n" +
+			");\n\n" +
+			"-- 常见查询的索引\n" +
+			"CREATE INDEX idx_users_email ON users(email);\n" +
+			"CREATE INDEX idx_users_status ON users(status) WHERE status = 'active';\n" +
+			cb + "\n\n" +
+			"## 索引指南\n\n" +
+			"| 查询模式 | 索引类型 |\n" +
+			"|----------|----------|\n" +
+			"| WHERE col = val | B-tree（默认） |\n" +
+			"| WHERE col LIKE 'prefix%' | B-tree |\n" +
+			"| 全文搜索 | GIN / 全文索引 |\n" +
+			"| JSON 字段查询 | GIN |\n" +
+			"| 地理空间 | GiST / R-tree |\n" +
+			"| 复合 WHERE a AND b | 复合索引 (a, b) |\n\n" +
 			"## 反模式\n\n" +
 			"- ❌ 存储逗号分隔的值（应使用关联表）\n" +
 			"- ❌ 所有字段都用 TEXT（选择合适的类型）\n" +
@@ -683,7 +898,7 @@ var seedSkills = []seedSkill{
 	{
 		title: "SEO Optimizer", titleZH: "SEO 优化器",
 		desc: "Analyze and optimize content for search engines", descZH: "分析和优化搜索引擎内容",
-		category: "Writing & Content", icon: "🔎", tags: "seo,optimization,content,marketing", skillType: "ai-powered", featured: 0, likes: 67, views: 1150,
+		category: "Writing & Content", icon: "🔎", tags: "seo,optimization,content,marketing", skillType: "ai-powered", featured: 0, likes: 4, views: 24,
 		content: "# SEO Optimizer\n\n" +
 			"Analyze web pages and content for search engine optimization opportunities.\n\n" +
 			"## On-Page SEO Checklist\n\n" +
@@ -732,25 +947,46 @@ var seedSkills = []seedSkill{
 			"### 标题标签\n" +
 			"- [ ] 包含主关键词\n" +
 			"- [ ] 60 字符以内\n" +
-			"- [ ] 全站唯一\n\n" +
+			"- [ ] 全站唯一\n" +
+			"- [ ] 有吸引力（包含数字、有力词汇或疑问句）\n\n" +
 			"### Meta 描述\n" +
 			"- [ ] 120-160 字符\n" +
-			"- [ ] 包含主关键词和行动号召\n\n" +
+			"- [ ] 包含主关键词和行动号召\n" +
+			"- [ ] 准确描述页面内容\n\n" +
+			"### 标题层级\n" +
+			"- [ ] 单个 H1 标签包含主关键词\n" +
+			"- [ ] H2 包含次要关键词\n" +
+			"- [ ] 逻辑标题层级（H1 → H2 → H3）\n\n" +
 			"### 内容\n" +
 			"- [ ] 至少 300 字（竞争性关键词 1500+）\n" +
 			"- [ ] 关键词密度 1-2%\n" +
 			"- [ ] 自然使用相关关键词\n" +
-			"- [ ] 短段落（3-4 句）\n\n" +
+			"- [ ] 短段落（3-4 句）\n" +
+			"- [ ] 包含列表、表格或结构化数据\n\n" +
 			"### 技术\n" +
 			"- [ ] 页面加载 < 3 秒\n" +
-			"- [ ] 移动端适配\n" +
+			"- [ ] 移动端适配（响应式设计）\n" +
 			"- [ ] 图片优化（WebP、懒加载、alt 文本）\n" +
-			"- [ ] 结构化数据标记（JSON-LD）\n",
+			"- [ ] 内链到相关页面\n" +
+			"- [ ] 外链到权威来源\n" +
+			"- [ ] 设置规范 URL\n" +
+			"- [ ] 结构化数据标记（JSON-LD）用于富摘要\n\n" +
+			"## Schema 标记示例\n\n" +
+			cb + "json\n" +
+			"{\n" +
+			"  \"@context\": \"https://schema.org\",\n" +
+			"  \"@type\": \"Article\",\n" +
+			"  \"headline\": \"Your Article Title\",\n" +
+			"  \"author\": { \"@type\": \"Person\", \"name\": \"Author\" },\n" +
+			"  \"datePublished\": \"2026-01-01\",\n" +
+			"  \"image\": \"https://example.com/image.jpg\"\n" +
+			"}\n" +
+			cb + "\n",
 	},
 	{
 		title: "DevOps Pipeline Setup", titleZH: "DevOps 流水线配置",
 		desc: "Configure CI/CD pipelines with best practices", descZH: "配置 CI/CD 流水线，包含最佳实践",
-		category: "Automation", icon: "⚙️", tags: "devops,cicd,pipeline,github-actions,docker", skillType: "general", featured: 0, likes: 88, views: 1580,
+		category: "Automation", icon: "⚙️", tags: "devops,cicd,pipeline,github-actions,docker", skillType: "general", featured: 0, likes: 5, views: 32,
 		content: "# DevOps Pipeline Setup\n\n" +
 			"Configure production-grade CI/CD pipelines for any project.\n\n" +
 			"## GitHub Actions Template\n\n" +
@@ -803,6 +1039,38 @@ var seedSkills = []seedSkill{
 			"- Set timeouts to prevent hung jobs\n",
 		contentZH: "# DevOps 流水线配置\n\n" +
 			"为项目配置生产级 CI/CD 流水线。\n\n" +
+			"## GitHub Actions 模板\n\n" +
+			cb + "yaml\n" +
+			"name: CI/CD\n" +
+			"on:\n" +
+			"  push:\n" +
+			"    branches: [main]\n" +
+			"  pull_request:\n" +
+			"    branches: [main]\n\n" +
+			"jobs:\n" +
+			"  test:\n" +
+			"    runs-on: ubuntu-latest\n" +
+			"    steps:\n" +
+			"      - uses: actions/checkout@v4\n" +
+			"      - uses: actions/setup-node@v4\n" +
+			"        with: { node-version: 20, cache: npm }\n" +
+			"      - run: npm ci\n" +
+			"      - run: npm run lint\n" +
+			"      - run: npm test -- --coverage\n" +
+			"      - uses: actions/upload-artifact@v4\n" +
+			"        with:\n" +
+			"          name: coverage\n" +
+			"          path: coverage/\n\n" +
+			"  deploy:\n" +
+			"    needs: test\n" +
+			"    if: github.ref == 'refs/heads/main'\n" +
+			"    runs-on: ubuntu-latest\n" +
+			"    steps:\n" +
+			"      - uses: actions/checkout@v4\n" +
+			"      - run: docker build -t app:${{ github.sha }} .\n" +
+			"      - run: docker push registry/app:${{ github.sha }}\n" +
+			"      - run: kubectl set image deploy/app app=registry/app:${{ github.sha }}\n" +
+			cb + "\n\n" +
 			"## 流水线阶段\n\n" +
 			"| 阶段 | 目的 | 失败是否阻断？ |\n" +
 			"|------|------|---------------|\n" +
@@ -826,7 +1094,7 @@ var seedSkills = []seedSkill{
 	{
 		title: "Git Commit Message Generator", titleZH: "Git 提交信息生成器",
 		desc: "Generate clear, conventional commit messages from code diffs", descZH: "根据代码差异生成清晰规范的提交信息",
-		category: "Coding & Development", icon: "📝", tags: "git,commit,conventional-commits,version-control", skillType: "ai-powered", featured: 1, likes: 156, views: 2890,
+		category: "Coding & Development", icon: "📝", tags: "git,commit,conventional-commits,version-control", skillType: "ai-powered", featured: 1, likes: 9, views: 58,
 		content: "# Git Commit Message Generator\n\n" +
 			"Generate descriptive commit messages following the Conventional Commits specification.\n\n" +
 			"## Format\n\n" +
@@ -891,14 +1159,34 @@ var seedSkills = []seedSkill{
 			"| `chore` | 构建、CI、依赖 |\n\n" +
 			"## 规则\n\n" +
 			"1. **主题**：使用祈使句，< 50 字符，不加句号\n" +
+			"   - ✅ `feat(auth): add JWT token refresh`\n" +
+			"   - ❌ `feat(auth): Added JWT token refresh.`\n\n" +
 			"2. **范围**：受影响的模块（可选但推荐）\n" +
-			"3. **正文**：解释*为什么*，而不是*做了什么*\n" +
-			"4. **页脚**：引用 issue、标注破坏性变更\n",
+			"   - 例如：`auth`, `api`, `ui`, `db`, `config`\n\n" +
+			"3. **正文**：解释*为什么*，而不是*做了什么*（diff 已经展示了做了什么）\n" +
+			"   - 每行不超过 72 字符\n" +
+			"   - 与主题之间空一行\n\n" +
+			"4. **页脚**：引用 issue、标注破坏性变更\n" +
+			"   - `Closes #123`\n" +
+			"   - `BREAKING CHANGE: API 响应格式变更`\n\n" +
+			"## 示例\n\n" +
+			cb + "\n" +
+			"feat(cart): add quantity validation on checkout\n\n" +
+			"Prevent orders with quantity > stock from being placed.\n" +
+			"Previously this was only validated client-side.\n\n" +
+			"Closes #456\n" +
+			cb + "\n\n" +
+			cb + "\n" +
+			"fix(api): handle timeout in payment webhook\n\n" +
+			"Payment provider occasionally sends delayed webhooks\n" +
+			"that exceeded our 5s timeout. Increased to 30s and\n" +
+			"added retry logic.\n" +
+			cb + "\n",
 	},
 	{
 		title: "README Generator", titleZH: "README 生成器",
 		desc: "Generate comprehensive README files for any project", descZH: "为任何项目生成全面的 README 文件",
-		category: "Writing & Content", icon: "📄", tags: "readme,documentation,markdown,open-source", skillType: "ai-powered", featured: 0, likes: 103, views: 1920,
+		category: "Writing & Content", icon: "📄", tags: "readme,documentation,markdown,open-source", skillType: "ai-powered", featured: 0, likes: 6, views: 39,
 		content: "# README Generator\n\n" +
 			"Generate a comprehensive, well-structured README.md for any project.\n\n" +
 			"## Template\n\n" +
@@ -946,6 +1234,39 @@ var seedSkills = []seedSkill{
 			"| License | Yes | Legal clarity |\n",
 		contentZH: "# README 生成器\n\n" +
 			"为任何项目生成结构完整的 README.md 文件。\n\n" +
+			"## 模板\n\n" +
+			cb + "markdown\n" +
+			"# Project Name\n\n" +
+			"One-line description of what this project does.\n\n" +
+			"![Build Status](badge-url) ![License](badge-url)\n\n" +
+			"## Features\n\n" +
+			"- Feature 1: Brief description\n" +
+			"- Feature 2: Brief description\n\n" +
+			"## Quick Start\n\n" +
+			"### Prerequisites\n" +
+			"- Node.js >= 18\n" +
+			"- PostgreSQL >= 14\n\n" +
+			"### Installation\n" +
+			"git clone https://github.com/user/repo.git\n" +
+			"cd repo\n" +
+			"npm install\n" +
+			"cp .env.example .env\n" +
+			"npm run dev\n\n" +
+			"## Usage\n\n" +
+			"Brief usage example with code.\n\n" +
+			"## API Reference\n\n" +
+			"| Endpoint | Method | Description |\n" +
+			"|----------|--------|-------------|\n" +
+			"| /api/users | GET | List users |\n\n" +
+			"## Contributing\n\n" +
+			"1. Fork the repository\n" +
+			"2. Create your feature branch\n" +
+			"3. Commit your changes\n" +
+			"4. Push to the branch\n" +
+			"5. Open a Pull Request\n\n" +
+			"## License\n\n" +
+			"MIT License - see LICENSE file\n" +
+			cb + "\n\n" +
 			"## 章节指南\n\n" +
 			"| 章节 | 是否必需 | 说明 |\n" +
 			"|------|----------|------|\n" +
@@ -960,7 +1281,7 @@ var seedSkills = []seedSkill{
 	{
 		title: "Regex Pattern Builder", titleZH: "正则表达式构建器",
 		desc: "Build and explain complex regular expressions step by step", descZH: "逐步构建和解释复杂的正则表达式",
-		category: "Coding & Development", icon: "🔤", tags: "regex,pattern-matching,validation,text-processing", skillType: "ai-powered", featured: 0, likes: 89, views: 1670,
+		category: "Coding & Development", icon: "🔤", tags: "regex,pattern-matching,validation,text-processing", skillType: "ai-powered", featured: 0, likes: 5, views: 34,
 		content: "# Regex Pattern Builder\n\n" +
 			"Build, test, and explain regular expressions step by step.\n\n" +
 			"## Common Patterns\n\n" +
@@ -1001,6 +1322,19 @@ var seedSkills = []seedSkill{
 			"| URL | `https?://[^\\\\s/$.?#].[^\\\\s]*` |\n" +
 			"| 手机号（中国） | `^1[3-9]\\\\d{9}$` |\n" +
 			"| 日期 | `\\\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\\\d|3[01])` |\n\n" +
+			"## 构建块\n\n" +
+			"| 符号 | 含义 | 示例 |\n" +
+			"|------|------|------|\n" +
+			"| `.` | 任意字符 | `a.c` → abc, a1c |\n" +
+			"| `*` | 0 个或多个 | `ab*c` → ac, abc, abbc |\n" +
+			"| `+` | 1 个或多个 | `ab+c` → abc, abbc |\n" +
+			"| `?` | 0 个或 1 个 | `colou?r` → color, colour |\n" +
+			"| `{n,m}` | n 到 m 次 | `a{2,4}` → aa, aaa, aaaa |\n" +
+			"| `()` | 捕获组 | `(ab)+` → ab, abab |\n" +
+			"| `(?:)` | 非捕获组 | `(?:ab)+` → ab, abab |\n" +
+			"| `(?=)` | 前瞻断言 | `foo(?=bar)` → foobar 中的 foo |\n" +
+			"| `(?<=)` | 后瞻断言 | `(?<=@)\\\\w+` → @domain 中的 domain |\n" +
+			"| `[^]` | 否定集合 | `[^0-9]` → 非数字 |\n\n" +
 			"## 输出格式\n\n" +
 			"构建正则时，始终提供：\n" +
 			"1. 正则模式\n" +
@@ -1011,7 +1345,7 @@ var seedSkills = []seedSkill{
 	{
 		title: "SQL Query Optimizer", titleZH: "SQL 查询优化器",
 		desc: "Analyze and optimize SQL queries for better performance", descZH: "分析和优化 SQL 查询以提升性能",
-		category: "Data & Analytics", icon: "⚡", tags: "sql,performance,optimization,database,query", skillType: "ai-powered", featured: 1, likes: 134, views: 2450,
+		category: "Data & Analytics", icon: "⚡", tags: "sql,performance,optimization,database,query", skillType: "ai-powered", featured: 1, likes: 8, views: 50,
 		content: "# SQL Query Optimizer\n\n" +
 			"Analyze SQL queries and suggest performance optimizations.\n\n" +
 			"## Optimization Checklist\n\n" +
@@ -1060,8 +1394,13 @@ var seedSkills = []seedSkill{
 		contentZH: "# SQL 查询优化器\n\n" +
 			"分析 SQL 查询并提供性能优化建议。\n\n" +
 			"## 优化清单\n\n" +
-			"### 1. 检查执行计划\n" +
-			"使用 `EXPLAIN ANALYZE` 分析查询。注意：\n" +
+			"### 1. 检查执行计划\n\n" +
+			cb + "sql\n" +
+			"EXPLAIN ANALYZE SELECT * FROM orders\n" +
+			"WHERE user_id = 123 AND status = 'active'\n" +
+			"ORDER BY created_at DESC LIMIT 20;\n" +
+			cb + "\n\n" +
+			"注意：\n" +
 			"- **全表扫描** → 添加索引\n" +
 			"- **嵌套循环** → 考虑 Hash Join\n" +
 			"- **排序成本高** → 添加匹配 ORDER BY 的索引\n\n" +
@@ -1072,16 +1411,35 @@ var seedSkills = []seedSkill{
 			"| WHERE 无索引 | 添加复合索引 |\n" +
 			"| `LIKE '%term%'` | 使用全文搜索 |\n" +
 			"| WHERE 中的子查询 | 改写为 JOIN |\n" +
-			"| 大表 `COUNT(*)` | 使用近似计数或物化视图 |\n\n" +
-			"### 3. 索引策略\n" +
-			"- 复合索引：等值列在前，范围列在后\n" +
-			"- 覆盖索引：包含所有 SELECT 列以避免回表\n" +
-			"- 部分索引：只索引相关的行\n",
+			"| 大表 `COUNT(*)` | 使用近似计数或物化视图 |\n" +
+			"| N+1 查询 | 使用 JOIN 或批量查询 |\n\n" +
+			"### 3. 索引策略\n\n" +
+			cb + "sql\n" +
+			"-- 复合索引：等值列在前，范围列在后\n" +
+			"-- 适用于: WHERE status = 'active' AND created_at > '2026-01-01'\n" +
+			"CREATE INDEX idx_orders_status_date ON orders(status, created_at);\n\n" +
+			"-- 覆盖索引：包含所有 SELECT 列以避免回表\n" +
+			"CREATE INDEX idx_orders_cover ON orders(user_id, status)\n" +
+			"  INCLUDE (total, created_at);\n\n" +
+			"-- 部分索引：只索引相关的行\n" +
+			"CREATE INDEX idx_orders_active ON orders(user_id)\n" +
+			"  WHERE status = 'active';\n" +
+			cb + "\n\n" +
+			"### 4. 查询改写\n\n" +
+			cb + "sql\n" +
+			"-- 改写前：慢子查询\n" +
+			"SELECT * FROM orders\n" +
+			"WHERE user_id IN (SELECT id FROM users WHERE country = 'US');\n\n" +
+			"-- 改写后：更快的 JOIN\n" +
+			"SELECT o.* FROM orders o\n" +
+			"JOIN users u ON o.user_id = u.id\n" +
+			"WHERE u.country = 'US';\n" +
+			cb + "\n",
 	},
 	{
 		title: "Docker Compose Generator", titleZH: "Docker Compose 生成器",
 		desc: "Generate Docker Compose configurations for development and production", descZH: "生成开发和生产环境的 Docker Compose 配置",
-		category: "Automation", icon: "🐳", tags: "docker,compose,containers,devops,infrastructure", skillType: "general", featured: 0, likes: 97, views: 1830,
+		category: "Automation", icon: "🐳", tags: "docker,compose,containers,devops,infrastructure", skillType: "general", featured: 0, likes: 6, views: 37,
 		content: "# Docker Compose Generator\n\n" +
 			"Generate Docker Compose configurations for common tech stacks.\n\n" +
 			"## Full-Stack Template\n\n" +
@@ -1135,6 +1493,37 @@ var seedSkills = []seedSkill{
 			"| Mailpit | axllent/mailpit | 1025/8025 |\n",
 		contentZH: "# Docker Compose 生成器\n\n" +
 			"为常见技术栈生成 Docker Compose 配置。\n\n" +
+			"## 全栈模板\n\n" +
+			cb + "yaml\n" +
+			"services:\n" +
+			"  app:\n" +
+			"    build: .\n" +
+			"    ports: ['3000:3000']\n" +
+			"    environment:\n" +
+			"      DATABASE_URL: postgres://user:pass@db:5432/app\n" +
+			"      REDIS_URL: redis://cache:6379\n" +
+			"    depends_on:\n" +
+			"      db: { condition: service_healthy }\n" +
+			"      cache: { condition: service_started }\n" +
+			"    volumes: ['./src:/app/src']  # Dev hot-reload\n\n" +
+			"  db:\n" +
+			"    image: postgres:16-alpine\n" +
+			"    environment:\n" +
+			"      POSTGRES_USER: user\n" +
+			"      POSTGRES_PASSWORD: pass\n" +
+			"      POSTGRES_DB: app\n" +
+			"    volumes: ['pgdata:/var/lib/postgresql/data']\n" +
+			"    healthcheck:\n" +
+			"      test: pg_isready -U user\n" +
+			"      interval: 5s\n" +
+			"      retries: 5\n\n" +
+			"  cache:\n" +
+			"    image: redis:7-alpine\n" +
+			"    volumes: ['redisdata:/data']\n\n" +
+			"volumes:\n" +
+			"  pgdata:\n" +
+			"  redisdata:\n" +
+			cb + "\n\n" +
 			"## 最佳实践\n\n" +
 			"- 使用 `depends_on` + `condition: service_healthy` 控制启动顺序\n" +
 			"- 使用 Alpine 镜像减小体积\n" +
@@ -1154,7 +1543,7 @@ var seedSkills = []seedSkill{
 	{
 		title: "Prompt Engineering Guide", titleZH: "Prompt 工程指南",
 		desc: "Master techniques for writing effective AI prompts", descZH: "掌握编写高效 AI 提示词的技巧",
-		category: "Data & Analytics", icon: "🧠", tags: "prompt,ai,llm,chatgpt,claude,engineering", skillType: "ai-powered", featured: 1, likes: 178, views: 3200,
+		category: "Data & Analytics", icon: "🧠", tags: "prompt,ai,llm,chatgpt,claude,engineering", skillType: "ai-powered", featured: 1, likes: 10, views: 65,
 		content: "# Prompt Engineering Guide\n\n" +
 			"Techniques for writing effective prompts that get accurate, useful AI responses.\n\n" +
 			"## Core Techniques\n\n" +
@@ -1208,10 +1597,21 @@ var seedSkills = []seedSkill{
 			"- **约束**：\"必须兼容 Node.js 18，不使用外部依赖\"\n" +
 			"- **格式**：\"输出为 markdown 表格\"\n" +
 			"- **示例**：展示输入/输出示例\n\n" +
-			"### 3. 思维链\n" +
-			"对于复杂问题，要求 AI 逐步思考。\n\n" +
-			"### 4. 少样本示例\n" +
-			"提供 2-3 个期望输出的示例。\n\n" +
+			"### 3. 思维链\n\n" +
+			"对于复杂问题，要求 AI 逐步思考：\n\n" +
+			"\"分析这个数据库架构的性能问题。对每个问题：\n" +
+			"1. 识别问题\n" +
+			"2. 解释为什么是问题\n" +
+			"3. 给出具体的 SQL 修复方案\n" +
+			"4. 估算性能影响\"\n\n" +
+			"### 4. 少样本示例\n\n" +
+			"提供 2-3 个期望输出的示例：\n\n" +
+			"\"将需求转换为用户故事：\n\n" +
+			"需求：用户可以重置密码\n" +
+			"故事：作为用户，我希望通过邮箱重置密码，以便重新访问我的账户。\n\n" +
+			"需求：管理员可以封禁用户\n" +
+			"故事：作为管理员，我希望通过 ID 封禁用户，以便执行社区规范。\n\n" +
+			"现在转换：用户可以将数据导出为 CSV\"\n\n" +
 			"### 5. 迭代优化\n" +
 			"- 从宽泛的提示开始，逐步缩小范围\n" +
 			"- 使用\"保留 X，但修改 Y\"进行增量调整\n" +
@@ -1225,7 +1625,7 @@ var seedSkills = []seedSkill{
 	{
 		title: "Dockerfile Best Practices", titleZH: "Dockerfile 最佳实践",
 		desc: "Write optimized, secure Dockerfiles for production applications", descZH: "编写优化、安全的生产级 Dockerfile",
-		category: "Automation", icon: "📦", tags: "docker,dockerfile,containers,security,optimization", skillType: "general", featured: 0, likes: 76, views: 1420,
+		category: "Automation", icon: "📦", tags: "docker,dockerfile,containers,security,optimization", skillType: "general", featured: 0, likes: 4, views: 29,
 		content: "# Dockerfile Best Practices\n\n" +
 			"Write optimized, secure, and maintainable Dockerfiles.\n\n" +
 			"## Multi-Stage Build Template\n\n" +
@@ -1267,6 +1667,28 @@ var seedSkills = []seedSkill{
 			"- Set `HEALTHCHECK` for container orchestration\n",
 		contentZH: "# Dockerfile 最佳实践\n\n" +
 			"编写优化、安全、可维护的 Dockerfile。\n\n" +
+			"## 多阶段构建模板\n\n" +
+			cb + "dockerfile\n" +
+			"# 阶段 1：构建\n" +
+			"FROM node:20-alpine AS builder\n" +
+			"WORKDIR /app\n" +
+			"COPY package*.json ./\n" +
+			"RUN npm ci --only=production && \\\n" +
+			"    cp -r node_modules prod_modules && \\\n" +
+			"    npm ci\n" +
+			"COPY . .\n" +
+			"RUN npm run build\n\n" +
+			"# 阶段 2：生产\n" +
+			"FROM node:20-alpine\n" +
+			"RUN addgroup -g 1001 app && adduser -u 1001 -G app -s /bin/sh -D app\n" +
+			"WORKDIR /app\n" +
+			"COPY --from=builder /app/prod_modules ./node_modules\n" +
+			"COPY --from=builder /app/dist ./dist\n" +
+			"USER app\n" +
+			"EXPOSE 3000\n" +
+			"HEALTHCHECK CMD wget -q --spider http://localhost:3000/health || exit 1\n" +
+			"CMD [\"node\", \"dist/server.js\"]\n" +
+			cb + "\n\n" +
 			"## 优化规则\n\n" +
 			"| 规则 | 原因 |\n" +
 			"|------|------|\n" +

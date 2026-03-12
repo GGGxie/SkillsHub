@@ -2,9 +2,11 @@ package handler
 
 import (
 	"database/sql"
+	"fmt"
 	"math"
 	"net/http"
 	"strconv"
+	"time"
 
 	"skillshub/internal/model"
 
@@ -12,11 +14,12 @@ import (
 )
 
 type SkillHandler struct {
-	db *sql.DB
+	db    *sql.DB
+	dedup *actionDedup
 }
 
-func NewSkillHandler(db *sql.DB) *SkillHandler {
-	return &SkillHandler{db: db}
+func NewSkillHandler(db *sql.DB, dedup *actionDedup) *SkillHandler {
+	return &SkillHandler{db: db, dedup: dedup}
 }
 
 func (h *SkillHandler) ListSkills(c *gin.Context) {
@@ -115,7 +118,10 @@ func (h *SkillHandler) GetFeaturedSkills(c *gin.Context) {
 func (h *SkillHandler) GetSkill(c *gin.Context) {
 	id := c.Param("id")
 
-	h.db.Exec("UPDATE skills SET views = views + 1 WHERE id = ?", id)
+	key := fmt.Sprintf("view:skill:%s:%s", c.ClientIP(), id)
+	if h.dedup.Allow(key, 1*time.Hour) {
+		h.db.Exec("UPDATE skills SET views = views + 1 WHERE id = ?", id)
+	}
 
 	var s model.Skill
 	err := h.db.QueryRow(`SELECT id, title, title_zh, description, desc_zh, category, icon, image, author_id, author_name, author_avatar, content, content_zh, tags, skill_type, featured, likes, views, created_at, updated_at

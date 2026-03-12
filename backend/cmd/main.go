@@ -30,9 +30,10 @@ func main() {
 		AllowCredentials: true,
 	}))
 
+	dedup := handler.NewDedup()
 	authHandler := handler.NewAuthHandler(db, cfg)
-	skillHandler := handler.NewSkillHandler(db)
-	articleHandler := handler.NewArticleHandler(db)
+	skillHandler := handler.NewSkillHandler(db, dedup)
+	articleHandler := handler.NewArticleHandler(db, dedup)
 
 	api := r.Group("/api")
 	{

@@ -55,7 +55,7 @@ export default function SkillDetailPage() {
     const description = isZH && skill.desc_zh ? skill.desc_zh : skill.description
     const body = isZH && skill.content_zh ? skill.content_zh : skill.content
 
-    const skillMd = `---\nname: ${skillName}\ndescription: >-\n  ${description}\n---\n\n${body}`
+    const skillMd = `---\nname: ${skillName}\ndescription: "${description.replace(/"/g, '\\"')}"\n---\n\n${body}`
 
     const blob = new Blob([skillMd], { type: 'text/markdown;charset=utf-8' })
     const url = URL.createObjectURL(blob)

@@ -17,7 +17,10 @@ func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found, using environment variables")
 	}
-	cfg := config.Load()
+	cfg, err := config.Load()
+	if err != nil {
+		log.Fatalf("Invalid configuration: %v", err)
+	}
 	db := service.InitDB(cfg.DatabasePath)
 	defer db.Close()
 

@@ -2,7 +2,9 @@ package handler
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
+	"log"
 	"math"
 	"net/http"
 	"strconv"
@@ -11,6 +13,12 @@ import (
 	"skillshub/internal/model"
 
 	"github.com/gin-gonic/gin"
+)
+
+const (
+	defaultPageSize = 12
+	maxPageSize     = 50
+	maxPage         = 100000
 )
 
 type SkillHandler struct {
@@ -32,8 +40,14 @@ func (h *SkillHandler) ListSkills(c *gin.Context) {
 	if page < 1 {
 		page = 1
 	}
-	if pageSize < 1 || pageSize > 50 {
-		pageSize = 12
+	if page > maxPage {
+		page = maxPage
+	}
+	if pageSize < 1 {
+		pageSize = defaultPageSize
+	}
+	if pageSize > maxPageSize {
+		pageSize = maxPageSize
 	}
 	offset := (page - 1) * pageSize
 
@@ -57,7 +71,10 @@ func (h *SkillHandler) ListSkills(c *gin.Context) {
 	var total int
 	countArgs := make([]interface{}, len(args))
 	copy(countArgs, args)
-	h.db.QueryRow(countQuery, countArgs...).Scan(&total)
+	if err := h.db.QueryRow(countQuery, countArgs...).Scan(&total); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch skills"})
+		return
+	}
 
 	switch sort {
 	case "latest":
@@ -160,22 +177,65 @@ func (h *SkillHandler) CreateSkill(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"id": id, "message": "Skill created successfully"})
 }
 
+// LikeSkill toggles the current user's like on a skill. The existence check,
+// the like row and the counter update run in one transaction so they either
+// all apply or none do.
 func (h *SkillHandler) LikeSkill(c *gin.Context) {
 	skillID := c.Param("id")
 	userID, _ := c.Get("user_id")
 
-	var exists int
-	h.db.QueryRow("SELECT COUNT(*) FROM likes WHERE user_id = ? AND skill_id = ?", userID, skillID).Scan(&exists)
-
-	if exists > 0 {
-		h.db.Exec("DELETE FROM likes WHERE user_id = ? AND skill_id = ?", userID, skillID)
-		h.db.Exec("UPDATE skills SET likes = likes - 1 WHERE id = ?", skillID)
-		c.JSON(http.StatusOK, gin.H{"liked": false})
-	} else {
-		h.db.Exec("INSERT INTO likes (user_id, skill_id) VALUES (?, ?)", userID, skillID)
-		h.db.Exec("UPDATE skills SET likes = likes + 1 WHERE id = ?", skillID)
-		c.JSON(http.StatusOK, gin.H{"liked": true})
+	fail := func(msg string, err error) {
+		log.Printf("like skill %s: %s: %v", skillID, msg, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update like"})
 	}
+
+	tx, err := h.db.BeginTx(c.Request.Context(), nil)
+	if err != nil {
+		fail("begin", err)
+		return
+	}
+	defer tx.Rollback() // no-op after a successful Commit
+
+	var found int
+	if err := tx.QueryRow("SELECT 1 FROM skills WHERE id = ?", skillID).Scan(&found); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Skill not found"})
+			return
+		}
+		fail("lookup skill", err)
+		return
+	}
+
+	res, err := tx.Exec("DELETE FROM likes WHERE user_id = ? AND skill_id = ?", userID, skillID)
+	if err != nil {
+		fail("delete like", err)
+		return
+	}
+	removed, err := res.RowsAffected()
+	if err != nil {
+		fail("rows affected", err)
+		return
+	}
+
+	liked := removed == 0
+	if liked {
+		if _, err := tx.Exec("INSERT INTO likes (user_id, skill_id) VALUES (?, ?)", userID, skillID); err != nil {
+			fail("insert like", err)
+			return
+		}
+		_, err = tx.Exec("UPDATE skills SET likes = likes + 1 WHERE id = ?", skillID)
+	} else {
+		_, err = tx.Exec("UPDATE skills SET likes = MAX(likes - 1, 0) WHERE id = ?", skillID)
+	}
+	if err != nil {
+		fail("update counter", err)
+		return
+	}
+	if err := tx.Commit(); err != nil {
+		fail("commit", err)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"liked": liked})
 }
 
 func (h *SkillHandler) GetCategories(c *gin.Context) {
@@ -223,9 +283,18 @@ func (h *SkillHandler) CreateComment(c *gin.Context) {
 		return
 	}
 
+	var found int
+	if err := h.db.QueryRow("SELECT 1 FROM skills WHERE id = ?", skillID).Scan(&found); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Skill not found"})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create comment"})
+		return
+	}
+
 	userID, _ := c.Get("user_id")
 	userName, _ := c.Get("name")
-
 	var avatar string
 	h.db.QueryRow("SELECT avatar FROM users WHERE id = ?", userID).Scan(&avatar)
 

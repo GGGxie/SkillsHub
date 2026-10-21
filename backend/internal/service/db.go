@@ -10,13 +10,14 @@ import (
 )
 
 // buildDSN appends the connection options we rely on (WAL journal, enforced
-// foreign keys). Paths that already carry a query string (e.g. in-memory
+// foreign keys, immediate write transactions so read-then-write transactions
+// do not fail on lock upgrade). Paths that already carry a query string (e.g. in-memory
 // "file:...?mode=memory") only get the foreign key option.
 func buildDSN(dbPath string) string {
 	if strings.Contains(dbPath, "?") {
-		return dbPath + "&_foreign_keys=on"
+		return dbPath + "&_foreign_keys=on&_txlock=immediate"
 	}
-	return dbPath + "?_journal_mode=WAL&_foreign_keys=on"
+	return dbPath + "?_journal_mode=WAL&_foreign_keys=on&_txlock=immediate"
 }
 
 // OpenDB opens the SQLite database, creates the schema and seeds initial data.

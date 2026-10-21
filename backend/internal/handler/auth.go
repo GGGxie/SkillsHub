@@ -2,7 +2,10 @@ package handler
 
 import (
 	"context"
+	"crypto/rand"
+	"crypto/subtle"
 	"database/sql"
+	"encoding/base64"
 	"encoding/json"
 	"net/http"
 	"time"
@@ -17,10 +20,20 @@ import (
 	"google.golang.org/api/idtoken"
 )
 
+const (
+	googleUserInfoURL = "https://www.googleapis.com/oauth2/v2/userinfo"
+
+	stateCookieName   = "oauth_state"
+	stateCookiePath   = "/api/auth"
+	stateCookieMaxAge = 600 // seconds
+	stateBytes        = 32
+)
+
 type AuthHandler struct {
 	db          *sql.DB
 	cfg         *config.Config
 	oauthConfig *oauth2.Config
+	userInfoURL string
 }
 
 func NewAuthHandler(db *sql.DB, cfg *config.Config) *AuthHandler {
@@ -32,15 +45,45 @@ func NewAuthHandler(db *sql.DB, cfg *config.Config) *AuthHandler {
 		Endpoint:     google.Endpoint,
 	}
 
-	return &AuthHandler{db: db, cfg: cfg, oauthConfig: oauthCfg}
+	return &AuthHandler{db: db, cfg: cfg, oauthConfig: oauthCfg, userInfoURL: googleUserInfoURL}
+}
+
+// newState returns 32 random bytes encoded as unpadded base64url.
+func newState() (string, error) {
+	b := make([]byte, stateBytes)
+	if _, err := rand.Read(b); err != nil {
+		return "", err
+	}
+	return base64.RawURLEncoding.EncodeToString(b), nil
+}
+
+func (h *AuthHandler) setStateCookie(c *gin.Context, value string, maxAge int) {
+	c.SetSameSite(http.SameSiteLaxMode)
+	c.SetCookie(stateCookieName, value, maxAge, stateCookiePath, "", h.cfg.SecureCookies(), true)
 }
 
 func (h *AuthHandler) GoogleLogin(c *gin.Context) {
-	url := h.oauthConfig.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
+	state, err := newState()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to start login"})
+		return
+	}
+	h.setStateCookie(c, state, stateCookieMaxAge)
+	url := h.oauthConfig.AuthCodeURL(state, oauth2.AccessTypeOffline)
 	c.JSON(http.StatusOK, gin.H{"url": url})
 }
 
 func (h *AuthHandler) GoogleCallback(c *gin.Context) {
+	// The state cookie is single-use: clear it whatever the outcome.
+	cookieState, cookieErr := c.Cookie(stateCookieName)
+	h.setStateCookie(c, "", -1)
+	queryState := c.Query("state")
+	if cookieErr != nil || cookieState == "" || queryState == "" ||
+		subtle.ConstantTimeCompare([]byte(cookieState), []byte(queryState)) != 1 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid state"})
+		return
+	}
+
 	code := c.Query("code")
 	if code == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Code is required"})
@@ -54,7 +97,7 @@ func (h *AuthHandler) GoogleCallback(c *gin.Context) {
 	}
 
 	client := h.oauthConfig.Client(context.Background(), token)
-	resp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
+	resp, err := client.Get(h.userInfoURL)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user info"})
 		return
@@ -84,7 +127,10 @@ func (h *AuthHandler) GoogleCallback(c *gin.Context) {
 		return
 	}
 
-	c.Redirect(http.StatusTemporaryRedirect, h.cfg.FrontendURL+"/auth/callback?token="+jwtToken)
+	// The token goes in the URL fragment so it is never sent to servers,
+	// written to access logs or forwarded in Referer headers.
+	c.Header("Cache-Control", "no-store")
+	c.Redirect(http.StatusTemporaryRedirect, h.cfg.FrontendURL+"/auth/callback#token="+jwtToken)
 }
 
 // GoogleTokenLogin handles frontend Google Sign-In with ID token

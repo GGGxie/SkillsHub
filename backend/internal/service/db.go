@@ -2,27 +2,57 @@ package service
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
+	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func InitDB(dbPath string) *sql.DB {
-	db, err := sql.Open("sqlite3", dbPath+"?_journal_mode=WAL")
+// buildDSN appends the connection options we rely on (WAL journal, enforced
+// foreign keys). Paths that already carry a query string (e.g. in-memory
+// "file:...?mode=memory") only get the foreign key option.
+func buildDSN(dbPath string) string {
+	if strings.Contains(dbPath, "?") {
+		return dbPath + "&_foreign_keys=on"
+	}
+	return dbPath + "?_journal_mode=WAL&_foreign_keys=on"
+}
+
+// OpenDB opens the SQLite database, creates the schema and seeds initial data.
+func OpenDB(dbPath string) (*sql.DB, error) {
+	db, err := sql.Open("sqlite3", buildDSN(dbPath))
 	if err != nil {
-		log.Fatal("Failed to open database:", err)
+		return nil, fmt.Errorf("open database: %w", err)
 	}
-
 	if err = db.Ping(); err != nil {
-		log.Fatal("Failed to ping database:", err)
+		db.Close()
+		return nil, fmt.Errorf("ping database: %w", err)
 	}
+	if err = initSchemaAndSeed(db); err != nil {
+		db.Close()
+		return nil, err
+	}
+	return db, nil
+}
 
-	createTables(db)
-	seedData(db)
+// InitDB is OpenDB for the server entrypoint: any failure is fatal.
+func InitDB(dbPath string) *sql.DB {
+	db, err := OpenDB(dbPath)
+	if err != nil {
+		log.Fatal("Failed to initialise database: ", err)
+	}
 	return db
 }
 
-func createTables(db *sql.DB) {
+func initSchemaAndSeed(db *sql.DB) error {
+	if err := createTables(db); err != nil {
+		return err
+	}
+	return seedData(db)
+}
+
+func createTables(db *sql.DB) error {
 	queries := []string{
 		`CREATE TABLE IF NOT EXISTS users (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -89,24 +119,31 @@ func createTables(db *sql.DB) {
 
 	for _, q := range queries {
 		if _, err := db.Exec(q); err != nil {
-			log.Fatal("Failed to create table:", err)
+			return fmt.Errorf("create table: %w", err)
 		}
 	}
+	return nil
 }
 
-func seedData(db *sql.DB) {
+func seedData(db *sql.DB) error {
 	var count int
-	db.QueryRow("SELECT COUNT(*) FROM skills").Scan(&count)
+	if err := db.QueryRow("SELECT COUNT(*) FROM skills").Scan(&count); err != nil {
+		return fmt.Errorf("count skills: %w", err)
+	}
 	if count > 0 {
-		return
+		return nil
 	}
 
-	db.Exec(`INSERT INTO users (id, google_id, email, name, avatar) VALUES (1, 'system', 'system@skillshub.cc', 'SkillsHub', '')`)
+	if _, err := db.Exec(`INSERT INTO users (id, google_id, email, name, avatar) VALUES (1, 'system', 'system@skillshub.cc', 'SkillsHub', '')`); err != nil {
+		return fmt.Errorf("seed user: %w", err)
+	}
 
 	for _, s := range seedSkills {
-		db.Exec(`INSERT INTO skills (title, title_zh, description, desc_zh, category, icon, author_id, author_name, content, content_zh, tags, skill_type, featured, likes, views)
+		if _, err := db.Exec(`INSERT INTO skills (title, title_zh, description, desc_zh, category, icon, author_id, author_name, content, content_zh, tags, skill_type, featured, likes, views)
 			VALUES (?, ?, ?, ?, ?, ?, 1, 'SkillsHub', ?, ?, ?, ?, ?, ?, ?)`,
-			s.title, s.titleZH, s.desc, s.descZH, s.category, s.icon, s.content, s.contentZH, s.tags, s.skillType, s.featured, s.likes, s.views)
+			s.title, s.titleZH, s.desc, s.descZH, s.category, s.icon, s.content, s.contentZH, s.tags, s.skillType, s.featured, s.likes, s.views); err != nil {
+			return fmt.Errorf("seed skill %q: %w", s.title, err)
+		}
 	}
 
 	articles := []struct {
@@ -273,8 +310,11 @@ func seedData(db *sql.DB) {
 	}
 
 	for _, a := range articles {
-		db.Exec(`INSERT INTO articles (title, title_zh, description, desc_zh, category, content, content_zh, author_id, author_name, views)
+		if _, err := db.Exec(`INSERT INTO articles (title, title_zh, description, desc_zh, category, content, content_zh, author_id, author_name, views)
 			VALUES (?, ?, ?, ?, ?, ?, ?, 1, 'SkillsHub', ?)`,
-			a.title, a.titleZH, a.desc, a.descZH, a.category, a.content, a.contentZH, a.views)
+			a.title, a.titleZH, a.desc, a.descZH, a.category, a.content, a.contentZH, a.views); err != nil {
+			return fmt.Errorf("seed article %q: %w", a.title, err)
+		}
 	}
+	return nil
 }
